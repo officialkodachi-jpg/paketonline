@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Paket Kodachi - Input Data</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: Arial, sans-serif; font-size: 12px; background: #fff; color: #000; }
+
+  /* TOOLBAR */
+  #toolbar {
+    display: flex; align-items: center; gap: 6px; padding: 4px 8px;
+    background: #f8f9fa; border-bottom: 1px solid #dadce0;
+    flex-wrap: wrap;
+  }
+  #toolbar .logo { font-weight: bold; font-size: 13px; color: #0f9d58; margin-right: 8px; }
+  #toolbar button {
+    padding: 4px 10px; font-size: 11px; border: 1px solid #dadce0;
+    background: #fff; cursor: pointer; border-radius: 3px;
+  }
+  #toolbar button:hover { background: #e8f0fe; border-color: #4285f4; }
+  #toolbar button.primary { background: #0f9d58; color: #fff; border-color: #0f9d58; font-weight: bold; }
+  #toolbar button.primary:hover { background: #0b8043; }
+  #toolbar button.danger { background: #ea4335; color: #fff; border-color: #ea4335; }
+  #toolbar .sep { width: 1px; height: 20px; background: #dadce0; }
+  #toolbar select { font-size: 11px; border: 1px solid #dadce0; padding: 3px 6px; border-radius: 3px; }
+  #status-bar { font-size: 11px; color: #666; margin-left: auto; }
+
+  /* SHEET TABS */
+  #sheet-tabs {
+    display: flex; align-items: center; padding: 0 8px;
+    background: #f1f3f4; border-bottom: 1px solid #dadce0;
+    height: 28px;
+  }
+  #sheet-tabs .tab {
+    padding: 4px 16px; font-size: 11px; cursor: pointer;
+    border: 1px solid transparent; border-bottom: none;
+    border-radius: 4px 4px 0 0; background: #e2e5e8;
+    margin-right: 2px; color: #333;
+  }
+  #sheet-tabs .tab.active { background: #fff; border-color: #dadce0; color: #000; font-weight: bold; }
+
+  /* FORMULA BAR */
+  #formula-bar {
+    display: flex; align-items: center; padding: 2px 8px; gap: 6px;
+    border-bottom: 1px solid #dadce0; background: #fff; height: 26px;
+  }
+  #cell-ref { width: 60px; font-size: 11px; border: 1px solid #dadce0; padding: 2px 4px; text-align: center; }
+  #formula-bar .fx { color: #666; font-size: 12px; font-style: italic; }
+  #cell-val { flex: 1; font-size: 11px; border: none; outline: none; }
+
+  /* TABLE WRAPPER */
+  #table-wrap { overflow: auto; height: calc(100vh - 140px); }
+
+  table { border-collapse: collapse; table-layout: fixed; width: max-content; min-width: 100%; }
+
+  /* FROZEN HEADER */
+  thead { position: sticky; top: 0; z-index: 10; }
+
+  /* ROW NUMBERS */
+  .rn {
+    background: #f8f9fa; border: 1px solid #dadce0; text-align: center;
+    color: #666; font-size: 11px; width: 30px; min-width: 30px;
+    user-select: none; position: sticky; left: 0; z-index: 5;
+  }
+  thead .rn { background: #f1f3f4; z-index: 15; }
+
+  th {
+    background: #f1f3f4; border: 1px solid #dadce0; text-align: center;
+    font-size: 11px; font-weight: 600; padding: 4px 6px;
+    white-space: nowrap; user-select: none; position: relative;
+  }
+  th.group-raw { background: #4472c4; color: #fff; }
+  th.group-parsing { background: #ff0000; color: #fff; }
+  th.group-1 { background: #ffff00; color: #000; }
+  th.group-3 { background: #92d050; color: #000; }
+  th.group-resi { background: #ffc000; color: #000; }
+  th.group-countdown { background: #ff6600; color: #fff; }
+
+  td {
+    border: 1px solid #dadce0; padding: 0; height: 22px;
+    vertical-align: middle; position: relative;
+  }
+  td input, td select {
+    width: 100%; height: 100%; border: none; outline: none;
+    font-size: 11px; font-family: Arial, sans-serif;
+    background: transparent; padding: 0 4px;
+  }
+  td select { cursor: pointer; }
+
+  tr:hover td { background: #f8f9ff; }
+  tr.selected td { background: #e8f0fe !important; }
+
+  /* STATUS COLORS */
+  td.status-sudah { background: #c6efce !important; }
+  td.status-belum { background: #ffc7ce !important; }
+  td.status-proses { background: #ffeb9c !important; }
+  td.status-instant { background: #00b0f0 !important; color: #fff; font-weight: bold; }
+  td.status-batal { background: #ff0000 !important; color: #fff; font-weight: bold; }
+  td.status-jnt { background: #e2efda !important; }
+
+  /* SOUND INDICATOR */
+  #sound-indicator {
+    position: fixed; top: 50px; right: 20px; padding: 8px 16px;
+    border-radius: 6px; font-size: 13px; font-weight: bold;
+    display: none; z-index: 999; animation: fadeout 2.5s forwards;
+  }
+  #sound-indicator.instant { background: #00b0f0; color: #fff; }
+  #sound-indicator.batal { background: #ff0000; color: #fff; }
+  @keyframes fadeout { 0%{opacity:1} 70%{opacity:1} 100%{opacity:0} }
+
+  /* SCROLLBAR */
+  #table-wrap::-webkit-scrollbar { width: 8px; height: 8px; }
+  #table-wrap::-webkit-scrollbar-track { background: #f1f1f1; }
+  #table-wrap::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 4px; }
+
+  /* MODAL */
+  #modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.5); z-index: 1000;
+    align-items: center; justify-content: center;
+  }
+  #modal-overlay.show { display: flex; }
+  #modal {
+    background: #fff; border-radius: 8px; padding: 20px;
+    width: 400px; max-width: 90vw; box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  }
+  #modal h3 { margin-bottom: 12px; font-size: 14px; color: #0f9d58; }
+  #modal input {
+    width: 100%; padding: 8px; border: 1px solid #dadce0;
+    border-radius: 4px; font-size: 12px; margin-bottom: 8px;
+  }
+  #modal .modal-btns { display: flex; gap: 8px; justify-content: flex-end; margin-top: 10px; }
+  #modal .modal-btns button { padding: 6px 14px; border-radius: 4px; cursor: pointer; font-size: 12px; }
+  #modal .modal-btns .ok { background: #0f9d58; color: #fff; border: none; }
+  #modal .modal-btns .cancel { background: #fff; border: 1px solid #dadce0; }
+
+  #progress { font-size: 11px; color: #0f9d58; margin-top: 6px; display: none; }
+</style>
+</head>
+<body>
+
+<div id="sound-indicator"></div>
+
+<!-- MODAL SHEET ID -->
+<div id="modal-overlay">
+  <div id="modal">
+    <h3>🔗 Hubungkan ke Google Sheets</h3>
+    <p style="font-size:11px;color:#666;margin-bottom:8px;">Masukkan Spreadsheet ID dari URL Google Sheets kamu:</p>
+    <input id="sheet-id-input" placeholder="Contoh: 108S_LT2zesCXG05IBQh61QjEI3TyFdOg2Ddxe5cYMaY" />
+    <input id="sheet-name-input" placeholder="Nama sheet (default: Sheet1)" value="Sheet1" />
+    <div id="progress"></div>
+    <div class="modal-btns">
+      <button class="cancel" onclick="closeModal()">Batal</button>
+      <button class="ok" onclick="saveSheetId()">Simpan</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOOLBAR -->
+<div id="toolbar">
+  <span class="logo">📦 Kodachi Paket</span>
+  <div class="sep"></div>
+  <button onclick="addRow()">➕ Tambah Baris</button>
+  <button onclick="deleteSelectedRow()">🗑️ Hapus Baris</button>
+  <div class="sep"></div>
+  <button class="primary" onclick="syncToSheets()">☁️ Kirim ke Sheets</button>
+  <button onclick="openModal()">⚙️ Setting Sheets</button>
+  <div class="sep"></div>
+  <button onclick="toggleSound()" id="sound-btn">🔊 Suara: ON</button>
+  <button onclick="clearAll()">🧹 Clear All</button>
+  <div class="sep"></div>
+  <span id="status-bar">Siap • 0 baris</span>
+</div>
+
+<!-- SHEET TABS -->
+<div id="sheet-tabs">
+  <div class="tab active">Raw Data-Paket</div>
+</div>
+
+<!-- FORMULA BAR -->
+<div id="formula-bar">
+  <input id="cell-ref" value="A1" readonly />
+  <span class="fx">fx</span>
+  <input id="cell-val" placeholder="Pilih sel untuk edit..." readonly />
+</div>
+
+<!-- TABLE -->
+<div id="table-wrap">
+<table id="main-table">
+<thead>
+  <tr>
+    <th class="rn" rowspan="2">#</th>
+    <th class="group-raw" colspan="4">Raw Data-Paket</th>
+    <th class="group-parsing" colspan="3">Parsing Produk DATA-Paket</th>
+    <th colspan="1" style="background:#f1f3f4"></th>
+    <th class="group-1" colspan="1">1</th>
+    <th class="group-3" colspan="2">3</th>
+    <th class="group-resi" colspan="1">Resi</th>
+    <th class="group-countdown" colspan="1">Countdown Pengiriman</th>
+  </tr>
+  <tr>
+    <th style="width:40px">Tgl</th>
+    <th style="width:30px">No</th>
+    <th style="width:120px">Kode Booking</th>
+    <th style="width:200px">Alamat</th>
+    <th style="width:180px">Produk</th>
+    <th style="width:140px">Nama Produk</th>
+    <th style="width:50px">Ukuran</th>
+    <th style="width:100px">Tipe Kaos Kaki</th>
+    <th style="width:80px">Ekspedisi</th>
+    <th style="width:70px">Packing</th>
+    <th style="width:60px">Nama</th>
+    <th style="width:60px">Kirim</th>
+    <th style="width:80px">Link</th>
+    <th style="width:80px">Countdown</th>
+  </tr>
+</thead>
+<tbody id="tbody"></tbody>
+</table>
+</div>
+
+<script>
+// ===================== STATE =====================
+let rows = [];
+let soundEnabled = true;
+let sheetId = localStorage.getItem('sheetId') || '108S_LT2zesCXG05IBQh61QjEI3TyFdOg2Ddxe5cYMaY';
+let sheetName = localStorage.getItem('sheetName') || 'Sheet1';
+let selectedRow = -1;
+const COLS = ['tgl','no','kodeBooking','alamat','produk','namaProduk','ukuran','tipeKaosKaki','ekspedisi','packing','nama','kirim','link','countdown'];
+
+// ===================== SOUND =====================
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let audioCtx;
+
+function getAudioCtx() {
+  if (!audioCtx) audioCtx = new AudioCtx();
+  return audioCtx;
+}
+
+function playInstant() {
+  if (!soundEnabled) return;
+  try {
+    const ctx = getAudioCtx();
+    const freqs = [523, 659, 784, 1047];
+    freqs.forEach((f, i) => {
+      const o = ctx.createOscillator();
+      const g = ctx.createGain();
+      o.connect(g); g.connect(ctx.destination);
+      o.frequency.value = f;
+      o.type = 'sine';
+      const t = ctx.currentTime + i * 0.12;
+      g.gain.setValueAtTime(0, t);
+      g.gain.linearRampToValueAtTime(0.3, t + 0.04);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
+      o.start(t); o.stop(t + 0.25);
+    });
+    showIndicator('instant', '⚡ INSTANT!');
+  } catch(e) {}
+}
+
+function playBatal() {
+  if (!soundEnabled) return;
+  try {
+    const ctx = getAudioCtx();
+    const freqs = [400, 300, 200];
+    freqs.forEach((f, i) => {
+      const o = ctx.createOscillator();
+      const g = ctx.createGain();
+      o.connect(g); g.connect(ctx.destination);
+      o.frequency.value = f;
+      o.type = 'sawtooth';
+      const t = ctx.currentTime + i * 0.18;
+      g.gain.setValueAtTime(0, t);
+      g.gain.linearRampToValueAtTime(0.25, t + 0.05);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 0.3);
+      o.start(t); o.stop(t + 0.3);
+    });
+    showIndicator('batal', '❌ BATAL!');
+  } catch(e) {}
+}
+
+function showIndicator(type, msg) {
+  const el = document.getElementById('sound-indicator');
+  el.className = type;
+  el.textContent = msg;
+  el.style.display = 'block';
+  el.style.animation = 'none';
+  void el.offsetWidth;
+  el.style.animation = 'fadeout 2.5s forwards';
+  setTimeout(() => el.style.display = 'none', 2500);
+}
+
+// ===================== ROW MANAGEMENT =====================
+function makeRow() {
+  const today = new Date();
+  const d = String(today.getDate()).padStart(2,'0') + '/' + String(today.getMonth()+1).padStart(2,'0');
+  return { tgl: d, no: rows.length + 1, kodeBooking: '', alamat: '', produk: '', namaProduk: '', ukuran: '', tipeKaosKaki: '', ekspedisi: 'J&T', packing: 'Sudah', nama: 'Lala', kirim: 'Sudah', link: '', countdown: '' };
+}
+
+function addRow() {
+  rows.push(makeRow());
+  renderRows();
+  updateStatus();
+  const tbody = document.getElementById('tbody');
+  tbody.lastElementChild?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function deleteSelectedRow() {
+  if (selectedRow < 0 || selectedRow >= rows.length) return;
+  rows.splice(selectedRow, 1);
+  rows.forEach((r, i) => r.no = i + 1);
+  selectedRow = -1;
+  renderRows();
+  updateStatus();
+}
+
+function clearAll() {
+  if (!confirm('Hapus semua data?')) return;
+  rows = [];
+  renderRows();
+  updateStatus();
+}
+
+// ===================== RENDER =====================
+function renderRows() {
+  const tbody = document.getElementById('tbody');
+  tbody.innerHTML = '';
+  rows.forEach((row, i) => {
+    const tr = document.createElement('tr');
+    tr.dataset.idx = i;
+    if (selectedRow === i) tr.classList.add('selected');
+
+    const rn = document.createElement('td');
+    rn.className = 'rn';
+    rn.textContent = i + 1;
+    rn.onclick = () => selectRow(i);
+    tr.appendChild(rn);
+
+    COLS.forEach(col => {
+      const td = document.createElement('td');
+      applyTdStyle(td, col, row[col]);
+
+      if (col === 'ekspedisi') {
+        const sel = makeSelect(['J&T', 'J&T Express', 'SiCepat', 'Anteraja', 'Shopee Express', 'Instant', 'Batal', 'Gosend'], row[col]);
+        sel.onchange = (e) => {
+          const prev = row[col];
+          row[col] = e.target.value;
+          applyTdStyle(td, col, row[col]);
+          if (row[col].toLowerCase() === 'instant' && prev.toLowerCase() !== 'instant') playInstant();
+          if (row[col].toLowerCase() === 'batal' && prev.toLowerCase() !== 'batal') playBatal();
+          updateCellRef(i, col, row[col]);
+        };
+        td.appendChild(sel);
+      } else if (col === 'packing' || col === 'kirim') {
+        const sel = makeSelect(['Sudah', 'Belum', 'Proses'], row[col]);
+        sel.onchange = (e) => {
+          row[col] = e.target.value;
+          applyTdStyle(td, col, row[col]);
+          updateCellRef(i, col, row[col]);
+        };
+        td.appendChild(sel);
+      } else if (col === 'nama') {
+        const sel = makeSelect(['Lala', 'Budi', 'Sari', 'Adi', 'Rini'], row[col]);
+        sel.onchange = (e) => { row[col] = e.target.value; updateCellRef(i, col, row[col]); };
+        td.appendChild(sel);
+      } else if (col === 'link') {
+        const inp = makeInput(row[col], col);
+        inp.placeholder = 'https://...';
+        inp.oninput = (e) => { row[col] = e.target.value; updateCellRef(i, col, row[col]); };
+        inp.onfocus = () => { td.style.outline = '2px solid #4285f4'; updateCellRef(i, col, row[col]); };
+        inp.onblur = () => { td.style.outline = ''; };
+        td.appendChild(inp);
+      } else {
+        const inp = makeInput(row[col], col);
+        inp.oninput = (e) => { row[col] = e.target.value; updateCellRef(i, col, row[col]); };
+        inp.onfocus = () => { td.style.outline = '2px solid #4285f4'; updateCellRef(i, col, row[col]); selectedRow = i; tr.classList.add('selected'); };
+        inp.onblur = () => { td.style.outline = ''; };
+        inp.onkeydown = (e) => handleKey(e, i, col);
+        td.appendChild(inp);
+      }
+
+      tr.appendChild(td);
+    });
+
+    tbody.appendChild(tr);
+  });
+}
+
+function makeSelect(options, val) {
+  const sel = document.createElement('select');
+  options.forEach(opt => {
+    const o = document.createElement('option');
+    o.value = opt; o.textContent = opt;
+    if (opt === val) o.selected = true;
+    sel.appendChild(o);
+  });
+  return sel;
+}
+
+function makeInput(val, col) {
+  const inp = document.createElement('input');
+  inp.type = 'text';
+  inp.value = val ?? '';
+  if (col === 'no') inp.style.textAlign = 'center';
+  if (col === 'tgl' || col === 'ukuran') inp.style.textAlign = 'center';
+  return inp;
+}
+
+function applyTdStyle(td, col, val) {
+  td.className = '';
+  if (!val) return;
+  const v = String(val).toLowerCase();
+  if (col === 'ekspedisi') {
+    if (v === 'instant') td.className = 'status-instant';
+    else if (v === 'batal') td.className = 'status-batal';
+    else td.className = 'status-jnt';
+  }
+  if (col === 'packing' || col === 'kirim') {
+    if (v === 'sudah') td.className = 'status-sudah';
+    else if (v === 'belum') td.className = 'status-belum';
+    else td.className = 'status-proses';
+  }
+}
+
+function selectRow(i) {
+  selectedRow = i;
+  document.querySelectorAll('#tbody tr').forEach((tr, idx) => {
+    tr.classList.toggle('selected', idx === i);
+  });
+}
+
+function updateCellRef(rowIdx, col, val) {
+  const colIdx = COLS.indexOf(col);
+  const letters = 'BCDEFGHIJKLMNO';
+  document.getElementById('cell-ref').value = (letters[colIdx] || '?') + (rowIdx + 3);
+  document.getElementById('cell-val').value = val ?? '';
+}
+
+function handleKey(e, rowIdx, col) {
+  const inputs = document.querySelectorAll('#tbody td input, #tbody td select');
+  const colIdx = COLS.indexOf(col);
+  const totalCols = COLS.length;
+  const flatIdx = rowIdx * totalCols + colIdx;
+
+  if (e.key === 'Tab' || e.key === 'Enter') {
+    e.preventDefault();
+    const next = inputs[flatIdx + 1];
+    if (next) next.focus();
+    else { addRow(); setTimeout(() => inputs[flatIdx + 1]?.focus(), 50); }
+  }
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    const next = inputs[flatIdx + totalCols];
+    if (next) next.focus();
+  }
+  if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    const prev = inputs[flatIdx - totalCols];
+    if (prev) prev.focus();
+  }
+}
+
+function updateStatus() {
+  document.getElementById('status-bar').textContent = `Siap • ${rows.length} baris`;
+}
+
+// ===================== GOOGLE SHEETS SYNC =====================
+async function syncToSheets() {
+  if (!sheetId) { openModal(); return; }
+
+  const btn = document.querySelector('button.primary');
+  btn.textContent = '⏳ Mengirim...';
+  btn.disabled = true;
+
+  try {
+    const values = [
+      ['Tgl','No','Kode Booking','Alamat','Produk','Nama Produk','Ukuran','Tipe Kaos Kaki','Ekspedisi','Packing','Nama','Kirim','Link','Countdown']
+    ];
+    rows.forEach(r => {
+      values.push(COLS.map(c => r[c] ?? ''));
+    });
+
+    const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json`;
+    const range = `${sheetName}!A1`;
+    const body = { values };
+
+    const resp = await fetch(
+      `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${encodeURIComponent(range)}?valueInputOption=RAW`,
+      {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      }
+    );
+
+    if (resp.ok) {
+      document.getElementById('status-bar').textContent = '✅ Berhasil dikirim ke Sheets!';
+    } else {
+      throw new Error('API error: ' + resp.status);
+    }
+  } catch(e) {
+    // Fallback: buka sheets dan tampilkan instruksi
+    showSyncFallback();
+  } finally {
+    btn.textContent = '☁️ Kirim ke Sheets';
+    btn.disabled = false;
+  }
+}
+
+function showSyncFallback() {
+  const tsv = rows.map(r => COLS.map(c => r[c] ?? '').join('\t')).join('\n');
+  const header = COLS.map(c => colLabel(c)).join('\t');
+  const full = header + '\n' + tsv;
+
+  const ta = document.createElement('textarea');
+  ta.value = full;
+  ta.style.cssText = 'position:fixed;left:-9999px;top:0';
+  document.body.appendChild(ta);
+  ta.select();
+  document.execCommand('copy');
+  document.body.removeChild(ta);
+
+  const url = `https://docs.google.com/spreadsheets/d/${sheetId}/edit#gid=0`;
+  document.getElementById('status-bar').textContent = '📋 Data di-copy! Buka Sheets → Ctrl+V';
+  window.open(url, '_blank');
+}
+
+function colLabel(col) {
+  const labels = { tgl:'Tgl', no:'No', kodeBooking:'Kode Booking', alamat:'Alamat', produk:'Produk', namaProduk:'Nama Produk', ukuran:'Ukuran', tipeKaosKaki:'Tipe Kaos Kaki', ekspedisi:'Ekspedisi', packing:'Packing', nama:'Nama', kirim:'Kirim', link:'Link', countdown:'Countdown' };
+  return labels[col] || col;
+}
+
+// ===================== MODAL =====================
+function openModal() {
+  document.getElementById('sheet-id-input').value = sheetId;
+  document.getElementById('sheet-name-input').value = sheetName;
+  document.getElementById('modal-overlay').classList.add('show');
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('show');
+}
+
+function saveSheetId() {
+  sheetId = document.getElementById('sheet-id-input').value.trim();
+  sheetName = document.getElementById('sheet-name-input').value.trim() || 'Sheet1';
+  localStorage.setItem('sheetId', sheetId);
+  localStorage.setItem('sheetName', sheetName);
+  closeModal();
+  document.getElementById('status-bar').textContent = `✅ Sheet ID disimpan: ${sheetId.substring(0,20)}...`;
+}
+
+// ===================== SOUND TOGGLE =====================
+function toggleSound() {
+  soundEnabled = !soundEnabled;
+  document.getElementById('sound-btn').textContent = soundEnabled ? '🔊 Suara: ON' : '🔇 Suara: OFF';
+}
+
+// ===================== INIT =====================
+// Tambah 10 baris kosong awal
+for (let i = 0; i < 10; i++) addRow();
+rows.forEach((r, i) => r.no = i + 1);
+renderRows();
+updateStatus();
+</script>
+</body>
+</html>
