@@ -1,3 +1,16 @@
+
+
+Running command
+
+Script
+
+Write the new v4 HTML file
+
+Script
+
+Spreadsheet v4 - flat 77 rows, no add-produk button, shortcut hint in toolbar
+html
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -8,11 +21,9 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: Arial, sans-serif; font-size: 12px; background: #fff; color: #000; }
 
-  /* TOOLBAR */
   #toolbar {
     display: flex; align-items: center; gap: 6px; padding: 4px 8px;
-    background: #f8f9fa; border-bottom: 1px solid #dadce0;
-    flex-wrap: wrap;
+    background: #f8f9fa; border-bottom: 1px solid #dadce0; flex-wrap: wrap;
   }
   #toolbar .logo { font-weight: bold; font-size: 13px; color: #0f9d58; margin-right: 8px; }
   #toolbar button {
@@ -23,15 +34,23 @@
   #toolbar button.primary { background: #0f9d58; color: #fff; border-color: #0f9d58; font-weight: bold; }
   #toolbar button.primary:hover { background: #0b8043; }
   #toolbar button.danger { background: #ea4335; color: #fff; border-color: #ea4335; }
+  #toolbar button.danger:hover { background: #c5221f; }
   #toolbar .sep { width: 1px; height: 20px; background: #dadce0; }
-  #toolbar select { font-size: 11px; border: 1px solid #dadce0; padding: 3px 6px; border-radius: 3px; }
   #status-bar { font-size: 11px; color: #666; margin-left: auto; }
 
-  /* SHEET TABS */
+  #shortcut-hint {
+    font-size: 10px; color: #555; background: #f1f3f4;
+    border: 1px solid #dadce0; border-radius: 3px;
+    padding: 2px 8px; white-space: nowrap; cursor: default;
+  }
+  #shortcut-hint kbd {
+    background: #e8e8e8; border: 1px solid #ccc; border-radius: 2px;
+    padding: 0 3px; font-size: 10px; font-family: monospace;
+  }
+
   #sheet-tabs {
     display: flex; align-items: center; padding: 0 8px;
-    background: #f1f3f4; border-bottom: 1px solid #dadce0;
-    height: 28px;
+    background: #f1f3f4; border-bottom: 1px solid #dadce0; height: 28px;
   }
   #sheet-tabs .tab {
     padding: 4px 16px; font-size: 11px; cursor: pointer;
@@ -41,7 +60,6 @@
   }
   #sheet-tabs .tab.active { background: #fff; border-color: #dadce0; color: #000; font-weight: bold; }
 
-  /* FORMULA BAR */
   #formula-bar {
     display: flex; align-items: center; padding: 2px 8px; gap: 6px;
     border-bottom: 1px solid #dadce0; background: #fff; height: 26px;
@@ -50,26 +68,27 @@
   #formula-bar .fx { color: #666; font-size: 12px; font-style: italic; }
   #cell-val { flex: 1; font-size: 11px; border: none; outline: none; }
 
-  /* TABLE WRAPPER */
   #table-wrap { overflow: auto; height: calc(100vh - 140px); }
-
   table { border-collapse: collapse; table-layout: fixed; width: max-content; min-width: 100%; }
-
-  /* FROZEN HEADER */
   thead { position: sticky; top: 0; z-index: 10; }
 
-  /* ROW NUMBERS */
   .rn {
     background: #f8f9fa; border: 1px solid #dadce0; text-align: center;
     color: #666; font-size: 11px; width: 30px; min-width: 30px;
     user-select: none; position: sticky; left: 0; z-index: 5;
+    cursor: pointer;
   }
-  thead .rn { background: #f1f3f4; z-index: 15; }
+  .rn:hover { background: #e8f0fe; }
+  .rn.selected-rn { background: #c8d8f8; }
+  .rn.empty-rn { color: #ddd; cursor: default; }
+  .rn.empty-rn:hover { background: #f8f9fa; }
+  thead .rn { background: #f1f3f4; z-index: 15; cursor: default; }
+  thead .rn:hover { background: #f1f3f4; }
 
   th {
     background: #f1f3f4; border: 1px solid #dadce0; text-align: center;
     font-size: 11px; font-weight: 600; padding: 4px 6px;
-    white-space: nowrap; user-select: none; position: relative;
+    white-space: nowrap; user-select: none;
   }
   th.group-raw { background: #4472c4; color: #fff; }
   th.group-parsing { background: #ff0000; color: #fff; }
@@ -89,8 +108,11 @@
   }
   td select { cursor: pointer; }
 
-  tr:hover td { background: #f8f9ff; }
-  tr.selected td { background: #e8f0fe !important; }
+  .order-row:hover td { background: #f8f9ff; }
+  .order-row.row-selected td { background: #e8f0fe !important; }
+  .order-row.row-selected .rn { background: #c8d8f8 !important; }
+
+  .empty-row td { background: #fafafa; }
 
   /* STATUS COLORS */
   td.status-sudah { background: #c6efce !important; }
@@ -100,7 +122,6 @@
   td.status-batal { background: #ff0000 !important; color: #fff; font-weight: bold; }
   td.status-jnt { background: #e2efda !important; }
 
-  /* SOUND INDICATOR */
   #sound-indicator {
     position: fixed; top: 50px; right: 20px; padding: 8px 16px;
     border-radius: 6px; font-size: 13px; font-weight: bold;
@@ -108,15 +129,12 @@
   }
   #sound-indicator.instant { background: #00b0f0; color: #fff; }
   #sound-indicator.batal { background: #ff0000; color: #fff; }
+  #sound-indicator.addproduk { background: #0f9d58; color: #fff; }
   @keyframes fadeout { 0%{opacity:1} 70%{opacity:1} 100%{opacity:0} }
 
-  /* SCROLLBAR */
   #table-wrap::-webkit-scrollbar { width: 8px; height: 8px; }
   #table-wrap::-webkit-scrollbar-track { background: #f1f1f1; }
   #table-wrap::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 4px; }
-
-  /* MULTI-CELL SELECTION */
-  td.sel-range { background: rgba(66,133,244,0.18) !important; outline: 1px solid #4285f4; }
 
   /* MODAL */
   #modal-overlay {
@@ -139,21 +157,24 @@
   #modal .modal-btns .ok { background: #0f9d58; color: #fff; border: none; }
   #modal .modal-btns .cancel { background: #fff; border: 1px solid #dadce0; }
 
-  #progress { font-size: 11px; color: #0f9d58; margin-top: 6px; display: none; }
+  #del-badge {
+    display: none; background: #ea4335; color: #fff;
+    border-radius: 10px; font-size: 10px; padding: 1px 6px;
+    margin-left: 2px;
+  }
 </style>
 </head>
 <body>
 
 <div id="sound-indicator"></div>
 
-<!-- MODAL SHEET ID -->
+<!-- MODAL -->
 <div id="modal-overlay">
   <div id="modal">
     <h3>🔗 Hubungkan ke Google Sheets</h3>
     <p style="font-size:11px;color:#666;margin-bottom:8px;">Masukkan Spreadsheet ID dari URL Google Sheets kamu:</p>
     <input id="sheet-id-input" placeholder="Contoh: 108S_LT2zesCXG05IBQh61QjEI3TyFdOg2Ddxe5cYMaY" />
     <input id="sheet-name-input" placeholder="Nama sheet (default: Sheet1)" value="Sheet1" />
-    <div id="progress"></div>
     <div class="modal-btns">
       <button class="cancel" onclick="closeModal()">Batal</button>
       <button class="ok" onclick="saveSheetId()">Simpan</button>
@@ -165,8 +186,10 @@
 <div id="toolbar">
   <span class="logo">📦 Kodachi Paket</span>
   <div class="sep"></div>
-  <button onclick="addRow()">➕ Tambah Baris</button>
-  <button onclick="deleteSelectedRow()">🗑️ Hapus Baris</button>
+  <button onclick="addOrder()">➕ Tambah Pesanan</button>
+  <button class="danger" onclick="deleteSelected()">
+    🗑️ Hapus <span id="del-badge"></span>
+  </button>
   <div class="sep"></div>
   <button class="primary" onclick="syncToSheets()">☁️ Kirim ke Sheets</button>
   <button onclick="openModal()">⚙️ Setting Sheets</button>
@@ -174,7 +197,10 @@
   <button onclick="toggleSound()" id="sound-btn">🔊 Suara: ON</button>
   <button onclick="clearAll()">🧹 Clear All</button>
   <div class="sep"></div>
-  <span id="status-bar">Siap • 0 baris</span>
+  <span id="shortcut-hint" title="Klik nomor baris untuk pilih, lalu tekan shortcut untuk tambah produk ke pesanan tersebut">
+    ➕ Produk: <kbd>Ctrl+Alt+Shift+0</kbd> (Win) &nbsp;/&nbsp; <kbd>⌘⌥⇧0</kbd> (Mac)
+  </span>
+  <span id="status-bar">Siap • 0 pesanan</span>
 </div>
 
 <!-- SHEET TABS -->
@@ -226,230 +252,255 @@
 
 <script>
 // ===================== STATE =====================
-let rows = [];
+const TOTAL_ROWS = 77;
+let orders = [];
 let soundEnabled = true;
 let sheetId = localStorage.getItem('sheetId') || '108S_LT2zesCXG05IBQh61QjEI3TyFdOg2Ddxe5cYMaY';
 let sheetName = localStorage.getItem('sheetName') || 'Sheet1';
-let selectedRow = -1;
-const COLS = ['tgl','no','kodeBooking','alamat','produk','namaProduk','ukuran','tipeKaosKaki','ekspedisi','packing','nama','kirim','link','countdown'];
-
-// ===================== SELECTION STATE =====================
-let selStart = null; // {row, col} index
-let selEnd   = null; // {row, col} index
-let isSelecting = false;
+let selectedOrders = new Set();
+let lastSelectedOrder = -1;
 
 // ===================== SOUND =====================
 const AudioCtx = window.AudioContext || window.webkitAudioContext;
 let audioCtx;
-
-function getAudioCtx() {
-  if (!audioCtx) audioCtx = new AudioCtx();
-  return audioCtx;
-}
+function getAudioCtx() { if (!audioCtx) audioCtx = new AudioCtx(); return audioCtx; }
 
 function playInstant() {
   if (!soundEnabled) return;
   try {
     const ctx = getAudioCtx();
-    const freqs = [523, 659, 784, 1047];
-    freqs.forEach((f, i) => {
-      const o = ctx.createOscillator();
-      const g = ctx.createGain();
+    [523,659,784,1047].forEach((f,i) => {
+      const o=ctx.createOscillator(), g=ctx.createGain();
       o.connect(g); g.connect(ctx.destination);
-      o.frequency.value = f;
-      o.type = 'sine';
-      const t = ctx.currentTime + i * 0.12;
-      g.gain.setValueAtTime(0, t);
-      g.gain.linearRampToValueAtTime(0.3, t + 0.04);
-      g.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
-      o.start(t); o.stop(t + 0.25);
+      o.frequency.value=f; o.type='sine';
+      const t=ctx.currentTime+i*0.12;
+      g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(0.3,t+0.04);
+      g.gain.exponentialRampToValueAtTime(0.001,t+0.25);
+      o.start(t); o.stop(t+0.25);
     });
-    showIndicator('instant', '⚡ INSTANT!');
-  } catch(e) {}
+    showIndicator('instant','⚡ INSTANT!');
+  } catch(e){}
 }
 
 function playBatal() {
   if (!soundEnabled) return;
   try {
     const ctx = getAudioCtx();
-    const freqs = [400, 300, 200];
-    freqs.forEach((f, i) => {
-      const o = ctx.createOscillator();
-      const g = ctx.createGain();
+    [400,300,200].forEach((f,i) => {
+      const o=ctx.createOscillator(), g=ctx.createGain();
       o.connect(g); g.connect(ctx.destination);
-      o.frequency.value = f;
-      o.type = 'sawtooth';
-      const t = ctx.currentTime + i * 0.18;
-      g.gain.setValueAtTime(0, t);
-      g.gain.linearRampToValueAtTime(0.25, t + 0.05);
-      g.gain.exponentialRampToValueAtTime(0.001, t + 0.3);
-      o.start(t); o.stop(t + 0.3);
+      o.frequency.value=f; o.type='sawtooth';
+      const t=ctx.currentTime+i*0.18;
+      g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(0.25,t+0.05);
+      g.gain.exponentialRampToValueAtTime(0.001,t+0.3);
+      o.start(t); o.stop(t+0.3);
     });
-    showIndicator('batal', '❌ BATAL!');
-  } catch(e) {}
+    showIndicator('batal','❌ BATAL!');
+  } catch(e){}
 }
 
 function showIndicator(type, msg) {
   const el = document.getElementById('sound-indicator');
-  el.className = type;
-  el.textContent = msg;
-  el.style.display = 'block';
-  el.style.animation = 'none';
-  void el.offsetWidth;
-  el.style.animation = 'fadeout 2.5s forwards';
-  setTimeout(() => el.style.display = 'none', 2500);
+  el.className=type; el.textContent=msg; el.style.display='block';
+  el.style.animation='none'; void el.offsetWidth;
+  el.style.animation='fadeout 2.5s forwards';
+  setTimeout(()=>el.style.display='none', 2500);
 }
 
-// ===================== ROW MANAGEMENT =====================
-function makeRow() {
+// ===================== ORDER MANAGEMENT =====================
+function makeProduk() {
+  return { produk: '', namaProduk: '', ukuran: '', tipeKaosKaki: '' };
+}
+
+function makeOrder(idx) {
   const today = new Date();
-  const d = String(today.getDate()).padStart(2,'0') + '/' + String(today.getMonth()+1).padStart(2,'0');
-  return { tgl: d, no: rows.length + 1, kodeBooking: '', alamat: '', produk: '', namaProduk: '', ukuran: '', tipeKaosKaki: '', ekspedisi: 'J&T', packing: 'Sudah', nama: 'Lala', kirim: 'Sudah', link: '', countdown: '' };
+  const d = String(today.getDate()).padStart(2,'0')+'/'+String(today.getMonth()+1).padStart(2,'0');
+  return {
+    tgl: d, no: idx+1, kodeBooking: '', alamat: '',
+    ekspedisi: 'J&T', packing: 'Sudah', nama: 'Lala', kirim: 'Sudah',
+    link: '', countdown: '',
+    produkList: [makeProduk()]
+  };
 }
 
-function addRow() {
-  rows.push(makeRow());
-  renderRows();
+function addOrder() {
+  if (orders.length >= TOTAL_ROWS) {
+    showIndicator('batal', '⚠️ Maksimal 77 baris');
+    return;
+  }
+  orders.push(makeOrder(orders.length));
+  renumberOrders();
+  renderAll();
   updateStatus();
-  const tbody = document.getElementById('tbody');
-  tbody.lastElementChild?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  const rows = document.querySelectorAll('#tbody .order-row');
+  const lastFilled = rows[orders.length - 1];
+  if (lastFilled) lastFilled.scrollIntoView({behavior:'smooth', block:'nearest'});
 }
 
-function deleteSelectedRow() {
-  if (selectedRow < 0 || selectedRow >= rows.length) return;
-  rows.splice(selectedRow, 1);
-  rows.forEach((r, i) => r.no = i + 1);
-  selectedRow = -1;
-  renderRows();
+function addProdukToOrder(orderIdx) {
+  orders[orderIdx].produkList.push(makeProduk());
+  const n = orders[orderIdx].produkList.length;
+  showIndicator('addproduk', `➕ Produk ke-${n} ditambahkan ke baris ${orderIdx+1}`);
+  updateStatus();
+}
+
+function renumberOrders() {
+  orders.forEach((o, i) => o.no = i + 1);
+}
+
+// ===================== MULTI-SELECT & DELETE =====================
+function toggleOrderSelect(orderIdx, e) {
+  if (orderIdx >= orders.length) return;
+  if (e.shiftKey && lastSelectedOrder >= 0) {
+    const lo = Math.min(lastSelectedOrder, orderIdx);
+    const hi = Math.max(lastSelectedOrder, orderIdx);
+    for (let i = lo; i <= hi; i++) selectedOrders.add(i);
+  } else if (e.ctrlKey || e.metaKey) {
+    if (selectedOrders.has(orderIdx)) selectedOrders.delete(orderIdx);
+    else selectedOrders.add(orderIdx);
+  } else {
+    if (selectedOrders.size === 1 && selectedOrders.has(orderIdx)) {
+      selectedOrders.clear();
+    } else {
+      selectedOrders.clear();
+      selectedOrders.add(orderIdx);
+    }
+  }
+  lastSelectedOrder = orderIdx;
+  updateDeleteBadge();
+  renderAll();
+}
+
+function updateDeleteBadge() {
+  const badge = document.getElementById('del-badge');
+  if (selectedOrders.size > 0) {
+    badge.style.display = 'inline';
+    badge.textContent = selectedOrders.size;
+  } else {
+    badge.style.display = 'none';
+  }
+}
+
+function deleteSelected() {
+  if (selectedOrders.size === 0) {
+    alert('Pilih pesanan dulu dengan klik nomor baris.\nShift+klik untuk range, Ctrl+klik untuk multiple.');
+    return;
+  }
+  const n = selectedOrders.size;
+  if (!confirm(`Hapus ${n} pesanan yang dipilih?`)) return;
+  const sorted = [...selectedOrders].sort((a,b) => b-a);
+  sorted.forEach(i => orders.splice(i, 1));
+  selectedOrders.clear();
+  lastSelectedOrder = -1;
+  renumberOrders();
+  updateDeleteBadge();
+  renderAll();
   updateStatus();
 }
 
 function clearAll() {
   if (!confirm('Hapus semua data?')) return;
-  rows = [];
-  renderRows();
+  orders = [];
+  selectedOrders.clear();
+  lastSelectedOrder = -1;
+  updateDeleteBadge();
+  renderAll();
   updateStatus();
 }
 
-// ===================== SELECTION HELPERS =====================
-function normSel() {
-  if (!selStart || !selEnd) return null;
-  return {
-    r1: Math.min(selStart.row, selEnd.row), r2: Math.max(selStart.row, selEnd.row),
-    c1: Math.min(selStart.col, selEnd.col), c2: Math.max(selStart.col, selEnd.col)
-  };
-}
+// ===================== RENDER =====================
+function renderAll() {
+  const tbody = document.getElementById('tbody');
+  tbody.innerHTML = '';
 
-function isCellSelected(row, col) {
-  const s = normSel(); if (!s) return false;
-  return row >= s.r1 && row <= s.r2 && col >= s.c1 && col <= s.c2;
-}
+  for (let rowIdx = 0; rowIdx < TOTAL_ROWS; rowIdx++) {
+    const order = orders[rowIdx] || null;
+    const isSelected = order && selectedOrders.has(rowIdx);
 
-function highlightSelection() {
-  document.querySelectorAll('#tbody td.sel-range').forEach(td => td.classList.remove('sel-range'));
-  const s = normSel(); if (!s) return;
-  const trs = document.querySelectorAll('#tbody tr');
-  for (let r = s.r1; r <= s.r2; r++) {
-    const tr = trs[r]; if (!tr) continue;
-    // +1 because first td is row number
-    for (let c = s.c1; c <= s.c2; c++) {
-      const td = tr.children[c + 1]; if (td) td.classList.add('sel-range');
+    const tr = document.createElement('tr');
+    tr.className = order
+      ? ('order-row' + (isSelected ? ' row-selected' : ''))
+      : 'empty-row';
+
+    // Row number
+    const rn = document.createElement('td');
+    rn.className = 'rn' + (isSelected ? ' selected-rn' : '') + (order ? '' : ' empty-rn');
+    rn.textContent = rowIdx + 1;
+    if (order) {
+      rn.title = 'Klik pilih • Shift+klik range • Ctrl+klik multi\nLalu Ctrl+Alt+Shift+0 (Win) / ⌘⌥⇧0 (Mac) untuk tambah produk';
+      rn.onclick = (e) => toggleOrderSelect(rowIdx, e);
     }
+    tr.appendChild(rn);
+
+    if (order) {
+      tr.appendChild(makeTextTd(order.tgl, v => order.tgl = v, 'center'));
+      tr.appendChild(makeTextTd(String(order.no), v => order.no = v, 'center'));
+      tr.appendChild(makeTextTd(order.kodeBooking, v => order.kodeBooking = v));
+      tr.appendChild(makeTextTd(order.alamat, v => order.alamat = v));
+
+      const p0 = order.produkList[0];
+      tr.appendChild(makeTextTd(p0.produk, v => p0.produk = v));
+      tr.appendChild(makeTextTd(p0.namaProduk, v => p0.namaProduk = v));
+      tr.appendChild(makeTextTd(p0.ukuran, v => p0.ukuran = v, 'center'));
+      tr.appendChild(makeTextTd(p0.tipeKaosKaki, v => p0.tipeKaosKaki = v));
+
+      // ekspedisi
+      const tdEksp = makeSelectTd(
+        ['J&T','J&T Express','SiCepat','Anteraja','Shopee Express','Instant','Batal','Gosend'],
+        order.ekspedisi,
+        (v, td) => {
+          const prev = order.ekspedisi;
+          order.ekspedisi = v;
+          applyExpStyle(td, v);
+          if (v.toLowerCase()==='instant' && prev.toLowerCase()!=='instant') playInstant();
+          if (v.toLowerCase()==='batal' && prev.toLowerCase()!=='batal') playBatal();
+        }, 'ekspedisi');
+      tr.appendChild(tdEksp);
+
+      tr.appendChild(makeSelectTd(['Sudah','Belum','Proses'], order.packing,
+        (v, td) => { order.packing = v; applyStatusStyle(td, v); }, 'status'));
+
+      tr.appendChild(makeSelectTd(['Lala','Budi','Sari','Adi','Rini'], order.nama,
+        (v) => { order.nama = v; }));
+
+      tr.appendChild(makeSelectTd(['Sudah','Belum','Proses'], order.kirim,
+        (v, td) => { order.kirim = v; applyStatusStyle(td, v); }, 'status'));
+
+      const tdLink = makeTextTd(order.link, v => order.link = v);
+      tdLink.querySelector('input').placeholder = 'https://...';
+      tr.appendChild(tdLink);
+
+      tr.appendChild(makeTextTd(order.countdown, v => order.countdown = v, 'center'));
+
+    } else {
+      // 14 empty cells for blank row
+      for (let c = 0; c < 14; c++) {
+        tr.appendChild(document.createElement('td'));
+      }
+    }
+
+    tbody.appendChild(tr);
   }
 }
 
-// ===================== RENDER =====================
-function renderRows() {
-  const tbody = document.getElementById('tbody');
-  tbody.innerHTML = '';
-  rows.forEach((row, i) => {
-    const tr = document.createElement('tr');
-    tr.dataset.idx = i;
-    if (selectedRow === i) tr.classList.add('selected');
-
-    const rn = document.createElement('td');
-    rn.className = 'rn';
-    rn.textContent = i + 1;
-    rn.onclick = () => selectRow(i);
-    tr.appendChild(rn);
-
-    COLS.forEach((col, colIdx) => {
-      const td = document.createElement('td');
-      td.dataset.row = i;
-      td.dataset.col = colIdx;
-      applyTdStyle(td, col, row[col]);
-
-      // Mouse selection on td
-      td.addEventListener('mousedown', (e) => {
-        if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') {
-          selStart = { row: i, col: colIdx };
-          selEnd   = { row: i, col: colIdx };
-          isSelecting = true;
-          highlightSelection();
-        }
-      });
-      td.addEventListener('mouseover', (e) => {
-        if (isSelecting) {
-          selEnd = { row: i, col: colIdx };
-          highlightSelection();
-        }
-      });
-
-      if (col === 'ekspedisi') {
-        const sel = makeSelect(['J&T', 'J&T Express', 'SiCepat', 'Anteraja', 'Shopee Express', 'Instant', 'Batal', 'Gosend'], row[col]);
-        sel.onchange = (e) => {
-          const prev = row[col];
-          row[col] = e.target.value;
-          applyTdStyle(td, col, row[col]);
-          if (row[col].toLowerCase() === 'instant' && prev.toLowerCase() !== 'instant') playInstant();
-          if (row[col].toLowerCase() === 'batal' && prev.toLowerCase() !== 'batal') playBatal();
-          updateCellRef(i, col, row[col]);
-        };
-        td.appendChild(sel);
-      } else if (col === 'packing' || col === 'kirim') {
-        const sel = makeSelect(['Sudah', 'Belum', 'Proses'], row[col]);
-        sel.onchange = (e) => {
-          row[col] = e.target.value;
-          applyTdStyle(td, col, row[col]);
-          updateCellRef(i, col, row[col]);
-        };
-        td.appendChild(sel);
-      } else if (col === 'nama') {
-        const sel = makeSelect(['Lala', 'Budi', 'Sari', 'Adi', 'Rini'], row[col]);
-        sel.onchange = (e) => { row[col] = e.target.value; updateCellRef(i, col, row[col]); };
-        td.appendChild(sel);
-      } else if (col === 'link') {
-        const inp = makeInput(row[col], col);
-        inp.placeholder = 'https://...';
-        inp.oninput = (e) => { row[col] = e.target.value; updateCellRef(i, col, row[col]); };
-        inp.onfocus = () => { td.style.outline = '2px solid #4285f4'; updateCellRef(i, col, row[col]); selStart = {row:i,col:colIdx}; selEnd={row:i,col:colIdx}; highlightSelection(); };
-        inp.onblur = () => { td.style.outline = ''; };
-        td.appendChild(inp);
-      } else {
-        const inp = makeInput(row[col], col);
-        inp.oninput = (e) => { row[col] = e.target.value; updateCellRef(i, col, row[col]); };
-        inp.onfocus = () => {
-          td.style.outline = '2px solid #4285f4';
-          updateCellRef(i, col, row[col]);
-          selectedRow = i; tr.classList.add('selected');
-          selStart = { row: i, col: colIdx };
-          selEnd   = { row: i, col: colIdx };
-          highlightSelection();
-        };
-        inp.onblur = () => { td.style.outline = ''; };
-        inp.onkeydown = (e) => handleKey(e, i, col);
-        td.appendChild(inp);
-      }
-
-      tr.appendChild(td);
-    });
-
-    tbody.appendChild(tr);
-  });
-  highlightSelection();
+// ===================== TD HELPERS =====================
+function makeTextTd(val, onInput, align) {
+  const td = document.createElement('td');
+  const inp = document.createElement('input');
+  inp.type = 'text';
+  inp.value = val ?? '';
+  if (align) inp.style.textAlign = align;
+  inp.oninput = e => onInput(e.target.value);
+  inp.onfocus = () => { td.style.outline = '2px solid #4285f4'; };
+  inp.onblur = () => { td.style.outline = ''; };
+  td.appendChild(inp);
+  return td;
 }
 
-function makeSelect(options, val) {
+function makeSelectTd(options, val, onChange, styleType) {
+  const td = document.createElement('td');
+  if (styleType === 'ekspedisi') applyExpStyle(td, val);
+  if (styleType === 'status') applyStatusStyle(td, val);
   const sel = document.createElement('select');
   options.forEach(opt => {
     const o = document.createElement('option');
@@ -457,192 +508,86 @@ function makeSelect(options, val) {
     if (opt === val) o.selected = true;
     sel.appendChild(o);
   });
-  return sel;
+  sel.onchange = e => onChange(e.target.value, td);
+  td.appendChild(sel);
+  return td;
 }
 
-function makeInput(val, col) {
-  const inp = document.createElement('input');
-  inp.type = 'text';
-  inp.value = val ?? '';
-  if (col === 'no') inp.style.textAlign = 'center';
-  if (col === 'tgl' || col === 'ukuran') inp.style.textAlign = 'center';
-  return inp;
-}
-
-function applyTdStyle(td, col, val) {
+function applyExpStyle(td, val) {
   td.className = '';
   if (!val) return;
-  const v = String(val).toLowerCase();
-  if (col === 'ekspedisi') {
-    if (v === 'instant') td.className = 'status-instant';
-    else if (v === 'batal') td.className = 'status-batal';
-    else td.className = 'status-jnt';
-  }
-  if (col === 'packing' || col === 'kirim') {
-    if (v === 'sudah') td.className = 'status-sudah';
-    else if (v === 'belum') td.className = 'status-belum';
-    else td.className = 'status-proses';
-  }
+  const v = val.toLowerCase();
+  if (v === 'instant') td.className = 'status-instant';
+  else if (v === 'batal') td.className = 'status-batal';
+  else td.className = 'status-jnt';
 }
 
-function selectRow(i) {
-  selectedRow = i;
-  document.querySelectorAll('#tbody tr').forEach((tr, idx) => {
-    tr.classList.toggle('selected', idx === i);
-  });
+function applyStatusStyle(td, val) {
+  td.className = '';
+  if (!val) return;
+  const v = val.toLowerCase();
+  if (v === 'sudah') td.className = 'status-sudah';
+  else if (v === 'belum') td.className = 'status-belum';
+  else td.className = 'status-proses';
 }
 
-function updateCellRef(rowIdx, col, val) {
-  const colIdx = COLS.indexOf(col);
-  const letters = 'BCDEFGHIJKLMNO';
-  document.getElementById('cell-ref').value = (letters[colIdx] || '?') + (rowIdx + 3);
-  document.getElementById('cell-val').value = val ?? '';
-}
-
-function handleKey(e, rowIdx, col) {
-  const inputs = document.querySelectorAll('#tbody td input, #tbody td select');
-  const colIdx = COLS.indexOf(col);
-  const totalCols = COLS.length;
-  const flatIdx = rowIdx * totalCols + colIdx;
-
-  if (e.key === 'Tab' || e.key === 'Enter') {
-    e.preventDefault();
-    const next = inputs[flatIdx + 1];
-    if (next) next.focus();
-    else { addRow(); setTimeout(() => inputs[flatIdx + 1]?.focus(), 50); }
-  }
-  if (e.key === 'ArrowDown') {
-    e.preventDefault();
-    const next = inputs[flatIdx + totalCols];
-    if (next) next.focus();
-  }
-  if (e.key === 'ArrowUp') {
-    e.preventDefault();
-    const prev = inputs[flatIdx - totalCols];
-    if (prev) prev.focus();
-  }
-}
-
+// ===================== STATUS =====================
 function updateStatus() {
-  document.getElementById('status-bar').textContent = `Siap • ${rows.length} baris`;
+  const totalProduk = orders.reduce((s, o) => s + o.produkList.length, 0);
+  document.getElementById('status-bar').textContent =
+    `Siap • ${orders.length} pesanan • ${totalProduk} produk`;
 }
-
-// ===================== GLOBAL MOUSE / PASTE =====================
-document.addEventListener('mouseup', () => { isSelecting = false; });
-
-document.addEventListener('paste', (e) => {
-  // Only handle paste when focus is inside the table
-  const active = document.activeElement;
-  const inTable = document.getElementById('tbody').contains(active);
-  if (!inTable && !selStart) return;
-
-  const text = (e.clipboardData || window.clipboardData).getData('text');
-  if (!text) return;
-
-  // Parse TSV (tab-separated rows from Excel / Google Sheets)
-  const pasteRows = text.trimEnd().split(/\r?\n/).map(line => line.split('\t'));
-
-  // Determine start cell
-  let startRow = selStart ? selStart.row : 0;
-  let startCol = selStart ? selStart.col : 0;
-
-  // Expand rows if needed
-  const neededRows = startRow + pasteRows.length;
-  while (rows.length < neededRows) rows.push(makeRow());
-
-  pasteRows.forEach((cells, ri) => {
-    cells.forEach((val, ci) => {
-      const targetCol = startCol + ci;
-      if (targetCol >= COLS.length) return;
-      const col = COLS[targetCol];
-      // For select columns, only set if value is valid option (or just set anyway)
-      rows[startRow + ri][col] = val.trim();
-    });
-    // Renumber if 'no' column affected
-    rows[startRow + ri].no = startRow + ri + 1;
-  });
-
-  // Update selEnd to show pasted range
-  selEnd = {
-    row: startRow + pasteRows.length - 1,
-    col: startCol + Math.max(...pasteRows.map(r => r.length)) - 1
-  };
-
-  renderRows();
-  updateStatus();
-  e.preventDefault();
-
-  // Flash status
-  const s = normSel();
-  const rcount = s.r2 - s.r1 + 1, ccount = s.c2 - s.c1 + 1;
-  document.getElementById('status-bar').textContent = `✅ Paste ${rcount} baris × ${ccount} kolom • Total ${rows.length} baris`;
-  setTimeout(updateStatus, 2500);
-});
 
 // ===================== GOOGLE SHEETS SYNC =====================
 async function syncToSheets() {
   if (!sheetId) { openModal(); return; }
-
   const btn = document.querySelector('button.primary');
-  btn.textContent = '⏳ Mengirim...';
-  btn.disabled = true;
-
+  btn.textContent = '⏳ Mengirim...'; btn.disabled = true;
   try {
-    const values = [
-      ['Tgl','No','Kode Booking','Alamat','Produk','Nama Produk','Ukuran','Tipe Kaos Kaki','Ekspedisi','Packing','Nama','Kirim','Link','Countdown']
-    ];
-    rows.forEach(r => {
-      values.push(COLS.map(c => r[c] ?? ''));
+    const values = [['Tgl','No','Kode Booking','Alamat','Produk','Nama Produk','Ukuran','Tipe Kaos Kaki','Ekspedisi','Packing','Nama','Kirim','Link','Countdown']];
+    orders.forEach(o => {
+      o.produkList.forEach((p, pi) => {
+        values.push([
+          pi===0?o.tgl:'', pi===0?o.no:'', pi===0?o.kodeBooking:'', pi===0?o.alamat:'',
+          p.produk, p.namaProduk, p.ukuran, p.tipeKaosKaki,
+          pi===0?o.ekspedisi:'', pi===0?o.packing:'', pi===0?o.nama:'',
+          pi===0?o.kirim:'', pi===0?o.link:'', pi===0?o.countdown:''
+        ]);
+      });
     });
-
-    const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json`;
     const range = `${sheetName}!A1`;
-    const body = { values };
-
     const resp = await fetch(
       `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${encodeURIComponent(range)}?valueInputOption=RAW`,
-      {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
-      }
+      { method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify({values}) }
     );
-
-    if (resp.ok) {
-      document.getElementById('status-bar').textContent = '✅ Berhasil dikirim ke Sheets!';
-    } else {
-      throw new Error('API error: ' + resp.status);
-    }
+    if (resp.ok) document.getElementById('status-bar').textContent = '✅ Berhasil dikirim ke Sheets!';
+    else throw new Error('API error: ' + resp.status);
   } catch(e) {
-    // Fallback: buka sheets dan tampilkan instruksi
     showSyncFallback();
   } finally {
-    btn.textContent = '☁️ Kirim ke Sheets';
-    btn.disabled = false;
+    btn.textContent = '☁️ Kirim ke Sheets'; btn.disabled = false;
   }
 }
 
 function showSyncFallback() {
-  const tsv = rows.map(r => COLS.map(c => r[c] ?? '').join('\t')).join('\n');
-  const header = COLS.map(c => colLabel(c)).join('\t');
-  const full = header + '\n' + tsv;
-
+  const lines = [['Tgl','No','Kode Booking','Alamat','Produk','Nama Produk','Ukuran','Tipe Kaos Kaki','Ekspedisi','Packing','Nama','Kirim','Link','Countdown'].join('\t')];
+  orders.forEach(o => {
+    o.produkList.forEach((p, pi) => {
+      lines.push([
+        pi===0?o.tgl:'', pi===0?o.no:'', pi===0?o.kodeBooking:'', pi===0?o.alamat:'',
+        p.produk, p.namaProduk, p.ukuran, p.tipeKaosKaki,
+        pi===0?o.ekspedisi:'', pi===0?o.packing:'', pi===0?o.nama:'',
+        pi===0?o.kirim:'', pi===0?o.link:'', pi===0?o.countdown:''
+      ].join('\t'));
+    });
+  });
   const ta = document.createElement('textarea');
-  ta.value = full;
+  ta.value = lines.join('\n');
   ta.style.cssText = 'position:fixed;left:-9999px;top:0';
-  document.body.appendChild(ta);
-  ta.select();
-  document.execCommand('copy');
+  document.body.appendChild(ta); ta.select(); document.execCommand('copy');
   document.body.removeChild(ta);
-
-  const url = `https://docs.google.com/spreadsheets/d/${sheetId}/edit#gid=0`;
   document.getElementById('status-bar').textContent = '📋 Data di-copy! Buka Sheets → Ctrl+V';
-  window.open(url, '_blank');
-}
-
-function colLabel(col) {
-  const labels = { tgl:'Tgl', no:'No', kodeBooking:'Kode Booking', alamat:'Alamat', produk:'Produk', namaProduk:'Nama Produk', ukuran:'Ukuran', tipeKaosKaki:'Tipe Kaos Kaki', ekspedisi:'Ekspedisi', packing:'Packing', nama:'Nama', kirim:'Kirim', link:'Link', countdown:'Countdown' };
-  return labels[col] || col;
+  window.open(`https://docs.google.com/spreadsheets/d/${sheetId}/edit#gid=0`, '_blank');
 }
 
 // ===================== MODAL =====================
@@ -651,11 +596,7 @@ function openModal() {
   document.getElementById('sheet-name-input').value = sheetName;
   document.getElementById('modal-overlay').classList.add('show');
 }
-
-function closeModal() {
-  document.getElementById('modal-overlay').classList.remove('show');
-}
-
+function closeModal() { document.getElementById('modal-overlay').classList.remove('show'); }
 function saveSheetId() {
   sheetId = document.getElementById('sheet-id-input').value.trim();
   sheetName = document.getElementById('sheet-name-input').value.trim() || 'Sheet1';
@@ -671,11 +612,34 @@ function toggleSound() {
   document.getElementById('sound-btn').textContent = soundEnabled ? '🔊 Suara: ON' : '🔇 Suara: OFF';
 }
 
+// ===================== KEYBOARD SHORTCUTS =====================
+document.addEventListener('keydown', (e) => {
+  // Ctrl+Delete / Ctrl+Backspace → hapus pesanan terpilih
+  if ((e.key === 'Delete' || e.key === 'Backspace') && e.ctrlKey && selectedOrders.size > 0) {
+    deleteSelected();
+  }
+
+  // Cmd+Option+Shift+0 (Mac) / Ctrl+Alt+Shift+0 (Win) → tambah produk ke pesanan terpilih
+  const isMac = e.metaKey && e.altKey && e.shiftKey && e.key === '0';
+  const isWin = e.ctrlKey && e.altKey && e.shiftKey && e.key === '0';
+  if (isMac || isWin) {
+    e.preventDefault();
+    let targetIdx = -1;
+    if (selectedOrders.size > 0) {
+      targetIdx = Math.max(...selectedOrders);
+    } else if (orders.length > 0) {
+      targetIdx = orders.length - 1;
+    }
+    if (targetIdx >= 0) {
+      addProdukToOrder(targetIdx);
+    }
+  }
+});
+
 // ===================== INIT =====================
-// Tambah 10 baris kosong awal
-for (let i = 0; i < 10; i++) addRow();
-rows.forEach((r, i) => r.no = i + 1);
-renderRows();
+orders.push(makeOrder(0));
+renumberOrders();
+renderAll();
 updateStatus();
 </script>
 </body>
