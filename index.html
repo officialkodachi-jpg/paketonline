@@ -115,6 +115,9 @@
   #table-wrap::-webkit-scrollbar-track { background: #f1f1f1; }
   #table-wrap::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 4px; }
 
+  /* MULTI-CELL SELECTION */
+  td.sel-range { background: rgba(66,133,244,0.18) !important; outline: 1px solid #4285f4; }
+
   /* MODAL */
   #modal-overlay {
     display: none; position: fixed; inset: 0;
@@ -230,6 +233,11 @@ let sheetName = localStorage.getItem('sheetName') || 'Sheet1';
 let selectedRow = -1;
 const COLS = ['tgl','no','kodeBooking','alamat','produk','namaProduk','ukuran','tipeKaosKaki','ekspedisi','packing','nama','kirim','link','countdown'];
 
+// ===================== SELECTION STATE =====================
+let selStart = null; // {row, col} index
+let selEnd   = null; // {row, col} index
+let isSelecting = false;
+
 // ===================== SOUND =====================
 const AudioCtx = window.AudioContext || window.webkitAudioContext;
 let audioCtx;
@@ -323,6 +331,33 @@ function clearAll() {
   updateStatus();
 }
 
+// ===================== SELECTION HELPERS =====================
+function normSel() {
+  if (!selStart || !selEnd) return null;
+  return {
+    r1: Math.min(selStart.row, selEnd.row), r2: Math.max(selStart.row, selEnd.row),
+    c1: Math.min(selStart.col, selEnd.col), c2: Math.max(selStart.col, selEnd.col)
+  };
+}
+
+function isCellSelected(row, col) {
+  const s = normSel(); if (!s) return false;
+  return row >= s.r1 && row <= s.r2 && col >= s.c1 && col <= s.c2;
+}
+
+function highlightSelection() {
+  document.querySelectorAll('#tbody td.sel-range').forEach(td => td.classList.remove('sel-range'));
+  const s = normSel(); if (!s) return;
+  const trs = document.querySelectorAll('#tbody tr');
+  for (let r = s.r1; r <= s.r2; r++) {
+    const tr = trs[r]; if (!tr) continue;
+    // +1 because first td is row number
+    for (let c = s.c1; c <= s.c2; c++) {
+      const td = tr.children[c + 1]; if (td) td.classList.add('sel-range');
+    }
+  }
+}
+
 // ===================== RENDER =====================
 function renderRows() {
   const tbody = document.getElementById('tbody');
@@ -338,9 +373,27 @@ function renderRows() {
     rn.onclick = () => selectRow(i);
     tr.appendChild(rn);
 
-    COLS.forEach(col => {
+    COLS.forEach((col, colIdx) => {
       const td = document.createElement('td');
+      td.dataset.row = i;
+      td.dataset.col = colIdx;
       applyTdStyle(td, col, row[col]);
+
+      // Mouse selection on td
+      td.addEventListener('mousedown', (e) => {
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') {
+          selStart = { row: i, col: colIdx };
+          selEnd   = { row: i, col: colIdx };
+          isSelecting = true;
+          highlightSelection();
+        }
+      });
+      td.addEventListener('mouseover', (e) => {
+        if (isSelecting) {
+          selEnd = { row: i, col: colIdx };
+          highlightSelection();
+        }
+      });
 
       if (col === 'ekspedisi') {
         const sel = makeSelect(['J&T', 'J&T Express', 'SiCepat', 'Anteraja', 'Shopee Express', 'Instant', 'Batal', 'Gosend'], row[col]);
@@ -369,13 +422,20 @@ function renderRows() {
         const inp = makeInput(row[col], col);
         inp.placeholder = 'https://...';
         inp.oninput = (e) => { row[col] = e.target.value; updateCellRef(i, col, row[col]); };
-        inp.onfocus = () => { td.style.outline = '2px solid #4285f4'; updateCellRef(i, col, row[col]); };
+        inp.onfocus = () => { td.style.outline = '2px solid #4285f4'; updateCellRef(i, col, row[col]); selStart = {row:i,col:colIdx}; selEnd={row:i,col:colIdx}; highlightSelection(); };
         inp.onblur = () => { td.style.outline = ''; };
         td.appendChild(inp);
       } else {
         const inp = makeInput(row[col], col);
         inp.oninput = (e) => { row[col] = e.target.value; updateCellRef(i, col, row[col]); };
-        inp.onfocus = () => { td.style.outline = '2px solid #4285f4'; updateCellRef(i, col, row[col]); selectedRow = i; tr.classList.add('selected'); };
+        inp.onfocus = () => {
+          td.style.outline = '2px solid #4285f4';
+          updateCellRef(i, col, row[col]);
+          selectedRow = i; tr.classList.add('selected');
+          selStart = { row: i, col: colIdx };
+          selEnd   = { row: i, col: colIdx };
+          highlightSelection();
+        };
         inp.onblur = () => { td.style.outline = ''; };
         inp.onkeydown = (e) => handleKey(e, i, col);
         td.appendChild(inp);
@@ -386,6 +446,7 @@ function renderRows() {
 
     tbody.appendChild(tr);
   });
+  highlightSelection();
 }
 
 function makeSelect(options, val) {
@@ -465,6 +526,58 @@ function handleKey(e, rowIdx, col) {
 function updateStatus() {
   document.getElementById('status-bar').textContent = `Siap • ${rows.length} baris`;
 }
+
+// ===================== GLOBAL MOUSE / PASTE =====================
+document.addEventListener('mouseup', () => { isSelecting = false; });
+
+document.addEventListener('paste', (e) => {
+  // Only handle paste when focus is inside the table
+  const active = document.activeElement;
+  const inTable = document.getElementById('tbody').contains(active);
+  if (!inTable && !selStart) return;
+
+  const text = (e.clipboardData || window.clipboardData).getData('text');
+  if (!text) return;
+
+  // Parse TSV (tab-separated rows from Excel / Google Sheets)
+  const pasteRows = text.trimEnd().split(/\r?\n/).map(line => line.split('\t'));
+
+  // Determine start cell
+  let startRow = selStart ? selStart.row : 0;
+  let startCol = selStart ? selStart.col : 0;
+
+  // Expand rows if needed
+  const neededRows = startRow + pasteRows.length;
+  while (rows.length < neededRows) rows.push(makeRow());
+
+  pasteRows.forEach((cells, ri) => {
+    cells.forEach((val, ci) => {
+      const targetCol = startCol + ci;
+      if (targetCol >= COLS.length) return;
+      const col = COLS[targetCol];
+      // For select columns, only set if value is valid option (or just set anyway)
+      rows[startRow + ri][col] = val.trim();
+    });
+    // Renumber if 'no' column affected
+    rows[startRow + ri].no = startRow + ri + 1;
+  });
+
+  // Update selEnd to show pasted range
+  selEnd = {
+    row: startRow + pasteRows.length - 1,
+    col: startCol + Math.max(...pasteRows.map(r => r.length)) - 1
+  };
+
+  renderRows();
+  updateStatus();
+  e.preventDefault();
+
+  // Flash status
+  const s = normSel();
+  const rcount = s.r2 - s.r1 + 1, ccount = s.c2 - s.c1 + 1;
+  document.getElementById('status-bar').textContent = `✅ Paste ${rcount} baris × ${ccount} kolom • Total ${rows.length} baris`;
+  setTimeout(updateStatus, 2500);
+});
 
 // ===================== GOOGLE SHEETS SYNC =====================
 async function syncToSheets() {
