@@ -89,14 +89,6 @@
   .produk-row td input, .produk-row td select { font-size: 10px; }
   .produk-row .rn { font-size: 9px; color: #999; }
 
-  /* Add-produk button cell */
-  .add-produk-cell {
-    text-align: center; background: #f9fff9 !important;
-    cursor: pointer; font-size: 10px; color: #0f9d58; font-weight: bold;
-    border: 1px dashed #ccc !important;
-  }
-  .add-produk-cell:hover { background: #e6f4ea !important; }
-
   /* Row colors */
   .order-row:hover td { background: #f8f9ff; }
   .order-row.row-selected td { background: #e8f0fe !important; }
@@ -240,6 +232,10 @@
 </table>
 </div>
 
+<!-- Autocomplete lists (dari sheet Excel) -->
+<datalist id="dl-produk"></datalist>
+<datalist id="dl-kaoskaki"></datalist>
+
 <script>
 // ===================== STATE =====================
 // orders: array of order objects
@@ -253,6 +249,15 @@ let sheetName = localStorage.getItem('sheetName') || 'Sheet1';
 // Selection: set of order indices (for multi-select via row-number click)
 let selectedOrders = new Set();
 let lastSelectedOrder = -1;
+
+// ===================== OPSI (sesuai aturan sheet "Paket" di Excel) =====================
+const OPT_EKSPEDISI = ['SPX','J&T','J&T DFOD','J&T Reguler','JNE REG','JNE','Sicepat','SPX Instan','GoSend Instant','Grab Instant','J&T Cargo'];
+const OPT_PACKING   = ['Sudah','Batal'];
+const OPT_NAMA      = ['Ryifih','Lala','Lina','Rifat','Laily','Angga','Fathia','Alya'];
+const OPT_KIRIM     = ['Sudah'];
+const OPT_UKURAN    = ['', '26','27','28','29','30','31','32','33','34','35','36','37','38','39','40','41','42','43','44','45'];
+const LIST_PRODUK = ["8111 Stripe", "8111 A", "8111 Hitam", "8111 H/P", "8111 H/H", "8111 R1", "8111 R2", "8111 R3", "8111 Monaco Checker Heel", "8111 P/Monaco", "8111 Brown A", "8111 Brown B", "8111 Brown C", "8111 H/P Double Black", "8116 Kuning Biru", "8116 Merah Biru", "8116 Merah Silver", "8116 Biru Silver", "8116 Hitam Putih", "8116 Hitam Silver", "8116 PH (Putih Hitam)", "8116 PDB (Putih Double Black)", "8116 Grey Double Black", "8116 Hitam Putih Double Black", "K2428 All White", "K2428 All Black", "K2428 Hitam/Putih", "K2428 Biru/Coklat", "K2428 Hijau/Abu", "8112 Double Navy", "8112 Hitam", "8118 KB", "8118 BS", "8118 MB", "8118 MS", "8115 Kuning", "8115 Merah", "8115 Putih", "8115 Biru", "8115 Hitam", "8115 Silver", "8172 HC", "8172 HP", "8172 PNM", "8172 PHj/M", "8172 NP", "8172 KHj", "8172 HO", "8172 OHj", "8172 Hijau Army", "8172 PO", "8172 KH", "8172 PH", "8172 MP", "8172 Ash Grey", "8172 PHM", "8172 P/Rose Gold", "8172 Putih", "8172 HC Double Black", "8172 HP Double Black", "8172 MP (alas merah)", "8172 HH All Black", "8172 HjK - Hijau Kuning", "8178 PO", "8175 Biru", "8175 Orange HBK", "8175 Olive Green", "8175 Abu", "8175 Kuning", "Chicago High Hitam Putih", "8136 Hitam", "8136 Hitam/Cream", "8136 Hijau/Cream", "8136 Putih", "8136 Tosca/Cream", "AR Plus Speed France Navy", "AR Plus Putih Biru", "AR Plus Putih Hitam", "AR Plus Putih Merah", "AR Plus Speed Monaco Navy", "AR Plus Provence P/BBM", "AR Plus Speed Putih/France", "AR Plus Provence Navy", "AR Provence BBM", "AR Plus Provence BBM", "AR Plus Provence Hitam/Hitam", "AR Plus Provence P/HHH", "AR Plus Speed Monaco Navy Sol Hitam", "Astoria P/BBM", "Astoria HP", "Galaxy Putih Hitam", "Galaxy Putih Merah Biru", "Galaxy Hitam Orange", "Galaxy Kuning Hijau", "Galaxy Hitam Emas", "Galaxy Hitam Putih", "Galaxy All Black", "Galaxy Putih Kuning Biru", "Galaxy Putih SIlver Merah", "Galaxy Putih Silver Biru", "Galaxy All White", "Galaxy Kuning Hitam", "Galaxy Hijau Kuning", "Riviera Hitam Putih", "Riviera Hitam Hitam", "Riviera Hitam Coklat", "Riviera Maroon", "Riviera Grey", "Riviera Navy", "Riviera Putih", "New Yorker High Cream/Hitam", "New Yorker High Hitam/Cream Waterproof", "New Yorker Low Cream/Hitam", "New Yorker Low Hitam/Cream Waterproof", "Kodachi Max Hitam/Cream", "Kodachi Max Navy/Putih", "Kodachi Max Abu/Putih", "Kodachi Max Maroon/Cream", "Kodachi Max Hitam/Merah", "Kodachi Max All White", "Kodachi Max All Black", "Kodachi Max PMB", "Kodachi Max Merah Putih", "Kodachi University High Hitam Putih", "Kodachi University Low Hitam Putih", "Kodachi University Low Grey", "Kodachi University Low Hijau Army", "Kodachi University Low Putih", "Kodachi University High Hitam Hitam", "Kodachi University Low Hitam Hitam", "Kodachi Matrix Hitam", "Kodachi Matrix Putih", "Alpha Black Grey", "Alpha Putih Biru", "Alpha Putih Navy", "Classic HC BW", "Classic LC BW", "Sparta HC New BBW", "Sparta HC BW", "Sparta HC All Black", "Sparta HC Putih", "Sparta LC BW", "Sparta LC All Black", "Sparta LC Putih", "Sparta LC New BBW", "Slip On Arthur Hitam Putih", "Slip On Arthur Hitam", "Slip On Arthur Putih", "Athena HC Black White", "Athena HC Putih", "Athena LC Black White", "Sparta Gum High Black", "Sparta Gum High White", "Sparta Gum Low Black", "Venus LC Putih", "Venus LC BW", "Warrior Sport Style Black", "Warrior Sport Style Grey", "Warrior Sport Style Beige", "Warrior Running All Black", "Warrior Running Grey", "Warrior Running Cream", "Ventela 70's High Navy", "Ventela 70's High B/Nat", "Ventela 70's High Black Gum", "Ventela 70's High Grey", "Ventela 70's High Putih", "Ventela 70's High Army Green", "Ventela 70's High Cream", "Ventela 70's Low Navy", "Ventela 70's Low B/Nat", "Ventela 70's Low Cream", "Ventela 70's Low Green", "Ventela Public High White", "Ventela Public High B/Nat", "Ventela Public High Cream", "Ventela Public High Dark Yellow", "Ventela Public High Maroon", "Ventela Public High Navy", "Ventela Public Low Cream", "Ventela Public Low All Black", "Ventela Public Low B/Nat", "Ventela Public Low White", "Ventela Public Low Dark Yellow", "Ventela Public Low Maroon", "Ventela Public Low Navy", "Ventela Public Low Grey", "Ventela Leaving A Legacy Low BW", "Ventela Sang Sekerta High Lohita", "Ventela Basic Low BNat", "Ventela Basic Low All Black", "Ventela Basic High B/Nat", "Ventela Basic Low All White", "Ventela Basic High All Black", "Ventela Basic High White", "Ventela Ethnic High White", "Ventela Ethnic High BNat", "Ventela Ethnic High All Black", "Ventela Ethnic Low All Black", "Ventela Ethnic Low BNat", "Ventela Ethnic Low All White", "Ventela Republic High B/Nat", "Ventela Republic High Grey", "Ventela Republic Low Cream", "Ventela Republic Low Gum Hitam", "Ventela Republic Low B/Nat", "Ventela Republic Low Grey", "Ventela Republic Low Navy", "Ventela Reborn Reflective B/Nat", "Ventela Reborn Reflective Navy", "Ventela Reborn Reflective Cream", "New Public Low B/Nat", "Ventela Evergreen High White", "Ventela Evergreen High Black", "Ventela Evergreen low Black", "Ventela Icon White", "Ventela Icon Black", "Ventela Alpha B/Nat", "Ventela Alpha All Black", "Ventela Alpha All White", "Ventela Olympic White Brown", "Ventela Olympic Black Brown", "Ventela V23 Black Brown", "Ventela V23 Grey Brown", "Ventela V23 Green Gum", "Ventela V23 Light Pink", "Ventela V23 Brown Gum", "Ventela V46 All Black", "Ventela V46 Grey", "Ventela Fatboy BNat", "Ventela Fatboy Black Gum", "Ventela Pokemon B/Nat", "Ventela Pokemon Cream", "Ventela Class Low BNat", "Ventela Class Low All Black", "Ventela Class High BNat", "Ventela Class High All Black", "Ventela Public Low Junior BNat", "Patrobas Cloud Slip On B/W", "Patrobas New Ivan Low B/W", "Patrobas Equip Low BW", "Patrobas Equip Low Grey", "Patrobas Ivan Low BW", "Sepatu MB 105 (Low) HP", "Sepatu MB  807 (Low) HP", "Sepatu MB 805 (High) All Black", "Sepatu MB 805 (High) HP", "Kaos kaki panjang", "Kaos kaki sekolah", "Kaos kaki Full Print", "Kaos kaki Terry", "Kaos kaki Pendek", "Kaos Kaki Invisible", "Kaos Kaki Anak", "Tali Sepatu", "Tali Sepatu Gemuk 2cm", "Sepatu BS 20", "Sepatu BS 25", "Ventela Diskon Display 150", "Kodachi Diskon Display 80", "Dragonfly Diskon Display 80", "Warrior Diskon Display 80", "Ventela diskon 190", "Kodachi Diskon Display 70", "kosong", "BS 50", "Aktual", "Uang Masuk", "Uang Keluar", "Diskon >6", "Box Tambahan Kecil", "Box Tambahan Besar", "Uang Keluar Ambil Rifyh"];
+const LIST_KAOSKAKI = ["BMB", "HHH", "HH", "Pink PP", "Rainbow", "Inggris Flag", "MM", "Ayam Jago", "MB", "Hitam PPP", "Hitam Weed", "Donat", "Hitam Polos", "Putih Polos", "Adidas BMB", "Feeling Fine Abu Tua", "Squidward Tosca", "Bart", "UTE Putih", "My Dog Abu", "Lilac Polos", "Harajuku Coklat", "Sandy", "Patric Oren", "Donat Biru Putih", "Weed Hitam", "Tribal TP1", "Tribal TM1", "Tribal THj1", "Tribal THA1", "Tribal THB1", "Tribal TC1", "Tribal THP1", "Tribal TC2", "Tribal THj2", "Tribal TKR1", "Tribal TAT1", "Tribal TAM1", "Tribal Batik Coklat 1", "Tribal TMR1", "Tribal THj3", "Tribal TPH1", "Sinchan Hitam", "AA", "HjHj", "Coklat Polos", "Marble Abu", "Dont Give Up Hitam", "East Abu", "Hijau Polos", "Navy PP", "Hitam MP", "Abu Puma", "Army Nike", "Abu HH", "Abu Tua Polos", "Kuning Polos", "Maroon Polos", "Abu Tua Puma", "Maroon PP", "Abu NB", "Abu Tua Nike", "Putih Nike", "Navy Nike", "Abu Adidas", "Anak", "Kuning HH", "Abu Tua Mizuno", "Maroon Smile", "Hitam KK", "Navy Adidas", "Hitam PP", "Hitam Nike", "Payung Hitam", "XX Hitam", "XX Putih", "Smile Hitam", "Stripe Kuning", "Stripe Maroon", "Stripe Army", "Tribal Hitam", "Tribal Hijau", "Tribal Maroon", "Tribal Army", "Tribal Coklat", "SD Hitam", "SMA Putih", "SMA Hitam"];
 
 // ===================== SOUND =====================
 const AudioCtx = window.AudioContext || window.webkitAudioContext;
@@ -446,38 +451,42 @@ function renderAll() {
     const tdProduk = makeTextTd(p0.produk, 1, (v) => { p0.produk = v; });
     tr.appendChild(tdProduk);
 
-    const tdNama = makeTextTd(p0.namaProduk, 1, (v) => { p0.namaProduk = v; });
+    const tdNama = makeTextTd(p0.namaProduk, 1, (v) => { p0.namaProduk = v; }, null, 'dl-produk');
     tr.appendChild(tdNama);
 
-    const tdUkuran = makeTextTd(p0.ukuran, 1, (v) => { p0.ukuran = v; }, 'center');
+    const tdUkuran = makeSelectTd(OPT_UKURAN, String(p0.ukuran ?? ''), 1, (v) => { p0.ukuran = v; });
+    tdUkuran.querySelector('select').style.textAlign = 'center';
     tr.appendChild(tdUkuran);
 
-    const tdTipe = makeTextTd(p0.tipeKaosKaki, 1, (v) => { p0.tipeKaosKaki = v; });
+    const tdTipe = makeTextTd(p0.tipeKaosKaki, 1, (v) => { p0.tipeKaosKaki = v; }, null, 'dl-kaoskaki');
     tr.appendChild(tdTipe);
 
     // ekspedisi (merged)
-    const tdEksp = makeSelectTd(['J&T','J&T Express','SiCepat','Anteraja','Shopee Express','Instant','Batal','Gosend'],
+    const tdEksp = makeSelectTd(OPT_EKSPEDISI,
       order.ekspedisi, produkCount, (v, td) => {
         const prev = order.ekspedisi;
         order.ekspedisi = v;
         applyExpStyle(td, v);
-        if (v.toLowerCase()==='instant' && prev.toLowerCase()!=='instant') playInstant();
-        if (v.toLowerCase()==='batal' && prev.toLowerCase()!=='batal') playBatal();
+        if (v.toLowerCase().includes('instan') && !prev.toLowerCase().includes('instan')) playInstant();
       }, 'ekspedisi');
     tr.appendChild(tdEksp);
 
-    // packing (merged)
-    const tdPack = makeSelectTd(['Sudah','Belum','Proses'], order.packing, produkCount,
-      (v, td) => { order.packing = v; applyStatusStyle(td, v); }, 'status');
+    // packing (merged) — Batal memicu bunyi batal
+    const tdPack = makeSelectTd(OPT_PACKING, order.packing, produkCount,
+      (v, td) => {
+        const prev = order.packing;
+        order.packing = v; applyStatusStyle(td, v);
+        if (v.toLowerCase()==='batal' && prev.toLowerCase()!=='batal') playBatal();
+      }, 'status');
     tr.appendChild(tdPack);
 
     // nama (merged)
-    const tdNamaPetugas = makeSelectTd(['Lala','Budi','Sari','Adi','Rini'], order.nama, produkCount,
+    const tdNamaPetugas = makeSelectTd(OPT_NAMA, order.nama, produkCount,
       (v) => { order.nama = v; });
     tr.appendChild(tdNamaPetugas);
 
     // kirim (merged)
-    const tdKirim = makeSelectTd(['Sudah','Belum','Proses'], order.kirim, produkCount,
+    const tdKirim = makeSelectTd(OPT_KIRIM, order.kirim, produkCount,
       (v, td) => { order.kirim = v; applyStatusStyle(td, v); }, 'status');
     tr.appendChild(tdKirim);
 
@@ -530,15 +539,16 @@ function renderAll() {
       tdPx.style.background = '#e8f4fd';
       trPx.appendChild(tdPx);
 
-      const tdNamaPx = makeTextTd(px.namaProduk, 1, (v) => px.namaProduk = v);
+      const tdNamaPx = makeTextTd(px.namaProduk, 1, (v) => px.namaProduk = v, null, 'dl-produk');
       tdNamaPx.style.background = '#e8f4fd';
       trPx.appendChild(tdNamaPx);
 
-      const tdUkPx = makeTextTd(px.ukuran, 1, (v) => px.ukuran = v, 'center');
+      const tdUkPx = makeSelectTd(OPT_UKURAN, String(px.ukuran ?? ''), 1, (v) => px.ukuran = v);
       tdUkPx.style.background = '#e8f4fd';
+      tdUkPx.querySelector('select').style.textAlign = 'center';
       trPx.appendChild(tdUkPx);
 
-      const tdTipePx = makeTextTd(px.tipeKaosKaki, 1, (v) => px.tipeKaosKaki = v);
+      const tdTipePx = makeTextTd(px.tipeKaosKaki, 1, (v) => px.tipeKaosKaki = v, null, 'dl-kaoskaki');
       tdTipePx.style.background = '#e8f4fd';
       trPx.appendChild(tdTipePx);
 
@@ -552,47 +562,11 @@ function renderAll() {
 
       tbody.appendChild(trPx);
     }
-
-    // === ADD PRODUK BUTTON ROW ===
-    const trAdd = document.createElement('tr');
-    trAdd.className = 'produk-row';
-    const rnAdd = document.createElement('td');
-    rnAdd.className = 'rn';
-    rnAdd.style.fontSize = '9px';
-    rnAdd.textContent = '+';
-    rnAdd.style.cursor = 'pointer';
-    rnAdd.style.color = '#0f9d58';
-    rnAdd.title = 'Tambah produk ke pesanan ini';
-    rnAdd.onclick = () => addProdukToOrder(oi);
-    trAdd.appendChild(rnAdd);
-
-    // 4 spacers
-    for (let i = 0; i < 4; i++) {
-      const sp = document.createElement('td');
-      sp.style.background = '#f9fff9'; sp.style.borderTop = 'none';
-      trAdd.appendChild(sp);
-    }
-
-    const addCell = document.createElement('td');
-    addCell.className = 'add-produk-cell';
-    addCell.colSpan = 4;
-    addCell.textContent = '+ Tambah Produk  ⌘⌥⇧0';
-    addCell.title = 'Tambah baris produk (⌘⌥⇧0 / Ctrl+Alt+Shift+0)';
-    addCell.onclick = () => addProdukToOrder(oi);
-    trAdd.appendChild(addCell);
-
-    // 6 spacers
-    for (let i = 0; i < 6; i++) {
-      const sp = document.createElement('td');
-      sp.style.background = '#f9fff9'; sp.style.borderTop = 'none';
-      trAdd.appendChild(sp);
-    }
-    tbody.appendChild(trAdd);
   });
 }
 
 // ===================== TD HELPERS =====================
-function makeTextTd(val, rowspan, onInput, align) {
+function makeTextTd(val, rowspan, onInput, align, listId) {
   const td = document.createElement('td');
   if (rowspan > 1) {
     td.rowSpan = rowspan;
@@ -601,6 +575,7 @@ function makeTextTd(val, rowspan, onInput, align) {
   const inp = document.createElement('input');
   inp.type = 'text';
   inp.value = val ?? '';
+  if (listId) { inp.setAttribute('list', listId); inp.autocomplete = 'off'; }
   if (align) inp.style.textAlign = align;
   inp.oninput = (e) => onInput(e.target.value);
   inp.onfocus = () => { td.style.outline = '2px solid #4285f4'; };
@@ -634,8 +609,7 @@ function applyExpStyle(td, val) {
   td.className = '';
   if (!val) return;
   const v = val.toLowerCase();
-  if (v === 'instant') td.className = 'status-instant';
-  else if (v === 'batal') td.className = 'status-batal';
+  if (v.includes('instan')) td.className = 'status-instant';
   else td.className = 'status-jnt';
 }
 
@@ -644,7 +618,7 @@ function applyStatusStyle(td, val) {
   if (!val) return;
   const v = val.toLowerCase();
   if (v === 'sudah') td.className = 'status-sudah';
-  else if (v === 'belum') td.className = 'status-belum';
+  else if (v === 'batal') td.className = 'status-batal';
   else td.className = 'status-proses';
 }
 
@@ -738,8 +712,9 @@ document.addEventListener('keydown', (e) => {
   }
 
   // Cmd+Option+Shift+0 (Mac) / Ctrl+Alt+Shift+0 (Win) → tambah produk ke pesanan terpilih
-  const isMacShortcut = e.metaKey && e.altKey && e.shiftKey && e.key === '0';
-  const isWinShortcut = e.ctrlKey && e.altKey && e.shiftKey && e.key === '0';
+  const isDigit0 = e.code === 'Digit0' || e.code === 'Numpad0' || e.key === '0';
+  const isMacShortcut = e.metaKey && e.altKey && e.shiftKey && isDigit0;
+  const isWinShortcut = e.ctrlKey && e.altKey && e.shiftKey && isDigit0;
   if (isMacShortcut || isWinShortcut) {
     e.preventDefault();
     let targetIdx = -1;
@@ -756,7 +731,16 @@ document.addEventListener('keydown', (e) => {
 });
 
 // ===================== INIT =====================
-orders.push(makeOrder());
+function fillDatalist(id, items) {
+  const dl = document.getElementById(id);
+  dl.innerHTML = '';
+  items.forEach(it => { const o = document.createElement('option'); o.value = it; dl.appendChild(o); });
+}
+fillDatalist('dl-produk', LIST_PRODUK);
+fillDatalist('dl-kaoskaki', LIST_KAOSKAKI);
+
+const INITIAL_ROWS = 77;
+for (let i = 0; i < INITIAL_ROWS; i++) orders.push(makeOrder());
 renumberOrders();
 renderAll();
 updateStatus();
