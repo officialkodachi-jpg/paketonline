@@ -8,6 +8,7 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: Arial, sans-serif; font-size: 12px; background: #fff; color: #000; }
 
+  /* ===== TOOLBAR ===== */
   #toolbar {
     display: flex; align-items: center; gap: 6px; padding: 4px 8px;
     background: #f8f9fa; border-bottom: 1px solid #dadce0; flex-wrap: wrap;
@@ -22,8 +23,8 @@
   #toolbar button.primary:hover { background: #0b8043; }
   #toolbar button.danger { background: #ea4335; color: #fff; border-color: #ea4335; }
   #toolbar button.danger:hover { background: #c5221f; }
-  #toolbar .sep { width: 1px; height: 20px; background: #dadce0; }
-  #status-bar { font-size: 11px; color: #666; margin-left: auto; }
+  #toolbar .sep { width: 1px; height: 20px; background: #dadce0; flex-shrink: 0; }
+  #status-bar { font-size: 11px; color: #666; margin-left: auto; white-space: nowrap; }
 
   #shortcut-hint {
     font-size: 10px; color: #555; background: #f1f3f4;
@@ -35,6 +36,37 @@
     padding: 0 3px; font-size: 10px; font-family: monospace;
   }
 
+  /* ===== FILTER BAR ===== */
+  #filter-bar {
+    display: flex; align-items: center; gap: 8px; padding: 4px 8px;
+    background: #fff9e6; border-bottom: 1px solid #ffe082; flex-wrap: wrap;
+  }
+  #filter-bar label { font-size: 11px; color: #555; font-weight: 600; }
+  #filter-bar input[type=text] {
+    padding: 3px 8px; font-size: 11px; border: 1px solid #dadce0;
+    border-radius: 3px; width: 180px;
+  }
+  #filter-bar select {
+    padding: 3px 6px; font-size: 11px; border: 1px solid #dadce0;
+    border-radius: 3px; background: #fff;
+  }
+  #filter-bar button {
+    padding: 3px 8px; font-size: 11px; border: 1px solid #dadce0;
+    border-radius: 3px; background: #fff; cursor: pointer;
+  }
+  #filter-bar button:hover { background: #e8f0fe; }
+  #filter-count { font-size: 11px; color: #888; margin-left: 4px; }
+
+  /* ===== AUTOSAVE INDICATOR ===== */
+  #autosave-indicator {
+    font-size: 10px; padding: 2px 8px; border-radius: 10px;
+    transition: all 0.3s;
+  }
+  #autosave-indicator.saved { color: #0f9d58; }
+  #autosave-indicator.saving { color: #f9a825; }
+  #autosave-indicator.unsaved { color: #ea4335; }
+
+  /* ===== SHEET TABS ===== */
   #sheet-tabs {
     display: flex; align-items: center; padding: 0 8px;
     background: #f1f3f4; border-bottom: 1px solid #dadce0; height: 28px;
@@ -47,6 +79,7 @@
   }
   #sheet-tabs .tab.active { background: #fff; border-color: #dadce0; color: #000; font-weight: bold; }
 
+  /* ===== FORMULA BAR ===== */
   #formula-bar {
     display: flex; align-items: center; padding: 2px 8px; gap: 6px;
     border-bottom: 1px solid #dadce0; background: #fff; height: 26px;
@@ -55,7 +88,8 @@
   #formula-bar .fx { color: #666; font-size: 12px; font-style: italic; }
   #cell-val { flex: 1; font-size: 11px; border: none; outline: none; }
 
-  #table-wrap { overflow: auto; height: calc(100vh - 140px); }
+  /* ===== TABLE ===== */
+  #table-wrap { overflow: auto; height: calc(100vh - 165px); }
   table { border-collapse: collapse; table-layout: fixed; width: max-content; min-width: 100%; }
   thead { position: sticky; top: 0; z-index: 10; }
 
@@ -63,7 +97,7 @@
     background: #f8f9fa; border: 1px solid #dadce0; text-align: center;
     color: #666; font-size: 11px; width: 30px; min-width: 30px;
     user-select: none; position: sticky; left: 0; z-index: 5;
-    cursor: pointer;
+    cursor: pointer; vertical-align: middle;
   }
   .rn:hover { background: #e8f0fe; }
   .rn.selected-rn { background: #c8d8f8; }
@@ -95,9 +129,30 @@
   }
   td select { cursor: pointer; }
 
-  .order-row:hover td { background: #f8f9ff; }
+  .order-row:hover td:not(.rn) { background: #f8f9ff; }
   .order-row.row-selected td { background: #e8f0fe !important; }
   .order-row.row-selected .rn { background: #c8d8f8 !important; }
+
+  /* Sub-product rows */
+  .sub-row td:not(.td-produk):not(.td-namaProduk):not(.td-ukuran):not(.td-tipeKaosKaki) {
+    background: #f5f5f5 !important;
+  }
+  .sub-row:hover td:not(.rn) { background: #f0f0f8 !important; }
+  .sub-row .td-produk-no {
+    background: #f0f0f0; color: #999; font-size: 10px;
+    text-align: center; border: 1px solid #dadce0;
+    vertical-align: middle; font-style: italic;
+    cursor: pointer; user-select: none;
+  }
+  .sub-row .td-produk-no:hover { background: #ffe0e0; color: #c00; }
+
+  /* Add-produk button cell */
+  .td-add-produk {
+    text-align: center; cursor: pointer; background: #f9fff9 !important;
+    border: 1px dashed #92d050 !important; color: #0f9d58;
+    font-size: 10px; vertical-align: middle;
+  }
+  .td-add-produk:hover { background: #e8f5e9 !important; }
 
   .empty-row td { background: #fafafa; }
 
@@ -109,6 +164,10 @@
   td.status-batal { background: #ff0000 !important; color: #fff; font-weight: bold; }
   td.status-jnt { background: #e2efda !important; }
 
+  /* HIDDEN row (filtered out) */
+  tr.filtered-hidden { display: none; }
+
+  /* ===== SOUND INDICATOR ===== */
   #sound-indicator {
     position: fixed; top: 50px; right: 20px; padding: 8px 16px;
     border-radius: 6px; font-size: 13px; font-weight: bold;
@@ -123,7 +182,7 @@
   #table-wrap::-webkit-scrollbar-track { background: #f1f1f1; }
   #table-wrap::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 4px; }
 
-  /* MODAL */
+  /* ===== MODAL ===== */
   #modal-overlay {
     display: none; position: fixed; inset: 0;
     background: rgba(0,0,0,0.5); z-index: 1000;
@@ -149,6 +208,9 @@
     border-radius: 10px; font-size: 10px; padding: 1px 6px;
     margin-left: 2px;
   }
+
+  /* Highlight search match */
+  .search-match { background: #fff176 !important; }
 </style>
 </head>
 <body>
@@ -187,7 +249,42 @@
   <span id="shortcut-hint" title="Klik nomor baris untuk pilih, lalu tekan shortcut untuk tambah produk ke pesanan tersebut">
     ➕ Produk: <kbd>Ctrl+Alt+Shift+0</kbd> (Win) &nbsp;/&nbsp; <kbd>⌘⌥⇧0</kbd> (Mac)
   </span>
+  <span id="autosave-indicator" class="saved">💾 Tersimpan</span>
   <span id="status-bar">Siap • 0 pesanan</span>
+</div>
+
+<!-- FILTER BAR -->
+<div id="filter-bar">
+  <label>🔍</label>
+  <input type="text" id="search-input" placeholder="Cari nama, alamat, kode booking..." oninput="applyFilter()" />
+  <label>Ekspedisi:</label>
+  <select id="filter-ekspedisi" onchange="applyFilter()">
+    <option value="">Semua</option>
+    <option>J&amp;T</option>
+    <option>J&amp;T Express</option>
+    <option>SiCepat</option>
+    <option>Anteraja</option>
+    <option>Shopee Express</option>
+    <option>Instant</option>
+    <option>Batal</option>
+    <option>Gosend</option>
+  </select>
+  <label>Packing:</label>
+  <select id="filter-packing" onchange="applyFilter()">
+    <option value="">Semua</option>
+    <option>Sudah</option>
+    <option>Belum</option>
+    <option>Proses</option>
+  </select>
+  <label>Kirim:</label>
+  <select id="filter-kirim" onchange="applyFilter()">
+    <option value="">Semua</option>
+    <option>Sudah</option>
+    <option>Belum</option>
+    <option>Proses</option>
+  </select>
+  <button onclick="clearFilter()">✖ Reset Filter</button>
+  <span id="filter-count"></span>
 </div>
 
 <!-- SHEET TABS -->
@@ -209,8 +306,7 @@
   <tr>
     <th class="rn" rowspan="2">#</th>
     <th class="group-raw" colspan="4">Raw Data-Paket</th>
-    <th class="group-parsing" colspan="3">Parsing Produk DATA-Paket</th>
-    <th colspan="1" style="background:#f1f3f4"></th>
+    <th class="group-parsing" colspan="4">Parsing Produk DATA-Paket</th>
     <th class="group-1" colspan="1">1</th>
     <th class="group-3" colspan="2">3</th>
     <th class="group-resi" colspan="1">Resi</th>
@@ -221,6 +317,7 @@
     <th style="width:30px">No</th>
     <th style="width:120px">Kode Booking</th>
     <th style="width:200px">Alamat</th>
+    <th style="width:30px">#P</th>
     <th style="width:180px">Produk</th>
     <th style="width:140px">Nama Produk</th>
     <th style="width:50px">Ukuran</th>
@@ -246,6 +343,53 @@ let sheetId = localStorage.getItem('sheetId') || '108S_LT2zesCXG05IBQh61QjEI3TyF
 let sheetName = localStorage.getItem('sheetName') || 'Sheet1';
 let selectedOrders = new Set();
 let lastSelectedOrder = -1;
+let autosaveTimer = null;
+
+// ===================== LOCAL STORAGE AUTO-SAVE =====================
+const LS_KEY = 'kodachi_paket_orders';
+
+function saveToLocalStorage() {
+  try {
+    localStorage.setItem(LS_KEY, JSON.stringify(orders));
+    setAutosaveIndicator('saved');
+  } catch(e) {
+    setAutosaveIndicator('unsaved');
+  }
+}
+
+function loadFromLocalStorage() {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        orders = parsed;
+        // Ensure all orders have produkList (backward compat)
+        orders.forEach(o => {
+          if (!Array.isArray(o.produkList)) o.produkList = [makeProduk()];
+        });
+        return true;
+      }
+    }
+  } catch(e) {}
+  return false;
+}
+
+function setAutosaveIndicator(state) {
+  const el = document.getElementById('autosave-indicator');
+  el.className = state;
+  if (state === 'saved') el.textContent = '💾 Tersimpan';
+  else if (state === 'saving') el.textContent = '💾 Menyimpan...';
+  else el.textContent = '⚠️ Belum tersimpan';
+}
+
+function scheduleSave() {
+  setAutosaveIndicator('saving');
+  if (autosaveTimer) clearTimeout(autosaveTimer);
+  autosaveTimer = setTimeout(() => {
+    saveToLocalStorage();
+  }, 800);
+}
 
 // ===================== SOUND =====================
 const AudioCtx = window.AudioContext || window.webkitAudioContext;
@@ -318,17 +462,33 @@ function addOrder() {
   orders.push(makeOrder(orders.length));
   renumberOrders();
   renderAll();
+  applyFilter();
   updateStatus();
+  scheduleSave();
   const rows = document.querySelectorAll('#tbody .order-row');
   const lastFilled = rows[orders.length - 1];
   if (lastFilled) lastFilled.scrollIntoView({behavior:'smooth', block:'nearest'});
 }
 
 function addProdukToOrder(orderIdx) {
+  if (orderIdx < 0 || orderIdx >= orders.length) return;
   orders[orderIdx].produkList.push(makeProduk());
   const n = orders[orderIdx].produkList.length;
-  showIndicator('addproduk', `➕ Produk ke-${n} ditambahkan ke baris ${orderIdx+1}`);
+  showIndicator('addproduk', `➕ Produk ke-${n} di baris ${orderIdx+1}`);
+  renderAll();
+  applyFilter();
   updateStatus();
+  scheduleSave();
+}
+
+function removeProdukFromOrder(orderIdx, produkIdx) {
+  if (orders[orderIdx].produkList.length <= 1) return; // jangan hapus produk terakhir
+  if (!confirm(`Hapus produk ke-${produkIdx+1} dari pesanan ${orderIdx+1}?`)) return;
+  orders[orderIdx].produkList.splice(produkIdx, 1);
+  renderAll();
+  applyFilter();
+  updateStatus();
+  scheduleSave();
 }
 
 function renumberOrders() {
@@ -356,6 +516,7 @@ function toggleOrderSelect(orderIdx, e) {
   lastSelectedOrder = orderIdx;
   updateDeleteBadge();
   renderAll();
+  applyFilter();
 }
 
 function updateDeleteBadge() {
@@ -382,7 +543,9 @@ function deleteSelected() {
   renumberOrders();
   updateDeleteBadge();
   renderAll();
+  applyFilter();
   updateStatus();
+  scheduleSave();
 }
 
 function clearAll() {
@@ -392,80 +555,205 @@ function clearAll() {
   lastSelectedOrder = -1;
   updateDeleteBadge();
   renderAll();
+  applyFilter();
   updateStatus();
+  scheduleSave();
+}
+
+// ===================== FILTER & SEARCH =====================
+function applyFilter() {
+  const search = document.getElementById('search-input').value.trim().toLowerCase();
+  const fEksp = document.getElementById('filter-ekspedisi').value;
+  const fPack = document.getElementById('filter-packing').value;
+  const fKirim = document.getElementById('filter-kirim').value;
+
+  const allOrderRows = document.querySelectorAll('#tbody tr[data-order-idx]');
+  const visible = new Set();
+
+  orders.forEach((o, idx) => {
+    let show = true;
+    if (fEksp && o.ekspedisi !== fEksp) show = false;
+    if (fPack && o.packing !== fPack) show = false;
+    if (fKirim && o.kirim !== fKirim) show = false;
+    if (search) {
+      const haystack = [
+        o.tgl, o.kodeBooking, o.alamat, o.nama, o.link, o.countdown,
+        ...o.produkList.map(p => [p.produk, p.namaProduk, p.ukuran, p.tipeKaosKaki]).flat()
+      ].join(' ').toLowerCase();
+      if (!haystack.includes(search)) show = false;
+    }
+    if (show) visible.add(idx);
+  });
+
+  allOrderRows.forEach(tr => {
+    const idx = parseInt(tr.dataset.orderIdx);
+    if (visible.has(idx) || isNaN(idx)) {
+      tr.classList.remove('filtered-hidden');
+    } else {
+      tr.classList.add('filtered-hidden');
+    }
+  });
+
+  // Empty rows
+  document.querySelectorAll('#tbody tr.empty-row').forEach(tr => {
+    const hasActive = document.querySelectorAll('#tbody tr[data-order-idx]:not(.filtered-hidden)').length;
+    tr.classList.toggle('filtered-hidden', fEksp || fPack || fKirim || search);
+  });
+
+  const activeFilter = fEksp || fPack || fKirim || search;
+  const countEl = document.getElementById('filter-count');
+  if (activeFilter) {
+    countEl.textContent = `Tampil ${visible.size} dari ${orders.length} pesanan`;
+  } else {
+    countEl.textContent = '';
+  }
+}
+
+function clearFilter() {
+  document.getElementById('search-input').value = '';
+  document.getElementById('filter-ekspedisi').value = '';
+  document.getElementById('filter-packing').value = '';
+  document.getElementById('filter-kirim').value = '';
+  applyFilter();
 }
 
 // ===================== RENDER =====================
 function renderAll() {
   const tbody = document.getElementById('tbody');
   tbody.innerHTML = '';
+  let displayRowCount = 0;
 
-  for (let rowIdx = 0; rowIdx < TOTAL_ROWS; rowIdx++) {
-    const order = orders[rowIdx] || null;
-    const isSelected = order && selectedOrders.has(rowIdx);
+  for (let orderIdx = 0; orderIdx < orders.length; orderIdx++) {
+    const order = orders[orderIdx];
+    const isSelected = selectedOrders.has(orderIdx);
+    const produkCount = order.produkList.length;
 
-    const tr = document.createElement('tr');
-    tr.className = order
-      ? ('order-row' + (isSelected ? ' row-selected' : ''))
-      : 'empty-row';
+    order.produkList.forEach((p, pi) => {
+      const tr = document.createElement('tr');
+      tr.dataset.orderIdx = orderIdx;
+      tr.dataset.produkIdx = pi;
 
-    // Row number
-    const rn = document.createElement('td');
-    rn.className = 'rn' + (isSelected ? ' selected-rn' : '') + (order ? '' : ' empty-rn');
-    rn.textContent = rowIdx + 1;
-    if (order) {
-      rn.title = 'Klik pilih • Shift+klik range • Ctrl+klik multi\nLalu Ctrl+Alt+Shift+0 (Win) / ⌘⌥⇧0 (Mac) untuk tambah produk';
-      rn.onclick = (e) => toggleOrderSelect(rowIdx, e);
-    }
-    tr.appendChild(rn);
-
-    if (order) {
-      tr.appendChild(makeTextTd(order.tgl, v => order.tgl = v, 'center'));
-      tr.appendChild(makeTextTd(String(order.no), v => order.no = v, 'center'));
-      tr.appendChild(makeTextTd(order.kodeBooking, v => order.kodeBooking = v));
-      tr.appendChild(makeTextTd(order.alamat, v => order.alamat = v));
-
-      const p0 = order.produkList[0];
-      tr.appendChild(makeTextTd(p0.produk, v => p0.produk = v));
-      tr.appendChild(makeTextTd(p0.namaProduk, v => p0.namaProduk = v));
-      tr.appendChild(makeTextTd(p0.ukuran, v => p0.ukuran = v, 'center'));
-      tr.appendChild(makeTextTd(p0.tipeKaosKaki, v => p0.tipeKaosKaki = v));
-
-      // ekspedisi
-      const tdEksp = makeSelectTd(
-        ['J&T','J&T Express','SiCepat','Anteraja','Shopee Express','Instant','Batal','Gosend'],
-        order.ekspedisi,
-        (v, td) => {
-          const prev = order.ekspedisi;
-          order.ekspedisi = v;
-          applyExpStyle(td, v);
-          if (v.toLowerCase()==='instant' && prev.toLowerCase()!=='instant') playInstant();
-          if (v.toLowerCase()==='batal' && prev.toLowerCase()!=='batal') playBatal();
-        }, 'ekspedisi');
-      tr.appendChild(tdEksp);
-
-      tr.appendChild(makeSelectTd(['Sudah','Belum','Proses'], order.packing,
-        (v, td) => { order.packing = v; applyStatusStyle(td, v); }, 'status'));
-
-      tr.appendChild(makeSelectTd(['Lala','Budi','Sari','Adi','Rini'], order.nama,
-        (v) => { order.nama = v; }));
-
-      tr.appendChild(makeSelectTd(['Sudah','Belum','Proses'], order.kirim,
-        (v, td) => { order.kirim = v; applyStatusStyle(td, v); }, 'status'));
-
-      const tdLink = makeTextTd(order.link, v => order.link = v);
-      tdLink.querySelector('input').placeholder = 'https://...';
-      tr.appendChild(tdLink);
-
-      tr.appendChild(makeTextTd(order.countdown, v => order.countdown = v, 'center'));
-
-    } else {
-      // 14 empty cells for blank row
-      for (let c = 0; c < 14; c++) {
-        tr.appendChild(document.createElement('td'));
+      if (pi === 0) {
+        tr.className = 'order-row' + (isSelected ? ' row-selected' : '');
+      } else {
+        tr.className = 'sub-row order-row' + (isSelected ? ' row-selected' : '');
       }
-    }
 
+      // Row number (rowspan on first produk row)
+      if (pi === 0) {
+        const rn = document.createElement('td');
+        rn.className = 'rn' + (isSelected ? ' selected-rn' : '');
+        rn.textContent = orderIdx + 1;
+        rn.rowSpan = produkCount;
+        rn.title = 'Klik pilih • Shift+klik range • Ctrl+klik multi';
+        rn.onclick = (e) => toggleOrderSelect(orderIdx, e);
+        tr.appendChild(rn);
+      }
+
+      // Raw data columns (only on first produk row)
+      if (pi === 0) {
+        tr.appendChild(makeTextTd(order.tgl, v => { order.tgl = v; scheduleSave(); }, 'center'));
+        tr.appendChild(makeTextTd(String(order.no), v => { order.no = v; scheduleSave(); }, 'center'));
+        tr.appendChild(makeTextTd(order.kodeBooking, v => { order.kodeBooking = v; scheduleSave(); }));
+        tr.appendChild(makeTextTd(order.alamat, v => { order.alamat = v; scheduleSave(); }));
+      } else {
+        // Spanned: add merged empty tds (they won't show due to rowspan, but we skip them)
+        // Actually for rowspan to work across multiple sub-rows we DON'T add these cells
+        // We only skip them for sub-rows
+      }
+
+      // Produk number cell
+      const tdPNo = document.createElement('td');
+      if (pi === 0) {
+        // Show add-produk button on first row
+        tdPNo.className = 'td-add-produk';
+        tdPNo.title = 'Klik untuk tambah produk ke pesanan ini';
+        tdPNo.innerHTML = produkCount === 1
+          ? `<span style="color:#0f9d58;font-size:11px">+</span>`
+          : `<span style="color:#0f9d58;font-size:10px">+${produkCount}</span>`;
+        tdPNo.onclick = () => addProdukToOrder(orderIdx);
+      } else {
+        tdPNo.className = 'td-produk-no';
+        tdPNo.title = `Klik untuk hapus produk ke-${pi+1}`;
+        tdPNo.textContent = `p${pi+1} ✕`;
+        tdPNo.onclick = () => removeProdukFromOrder(orderIdx, pi);
+      }
+      tr.appendChild(tdPNo);
+
+      // Produk fields
+      const tdProduk = makeTextTd(p.produk, v => { p.produk = v; scheduleSave(); });
+      tdProduk.classList.add('td-produk');
+      tr.appendChild(tdProduk);
+
+      const tdNama = makeTextTd(p.namaProduk, v => { p.namaProduk = v; scheduleSave(); });
+      tdNama.classList.add('td-namaProduk');
+      tr.appendChild(tdNama);
+
+      const tdUkuran = makeTextTd(p.ukuran, v => { p.ukuran = v; scheduleSave(); }, 'center');
+      tdUkuran.classList.add('td-ukuran');
+      tr.appendChild(tdUkuran);
+
+      const tdTipe = makeTextTd(p.tipeKaosKaki, v => { p.tipeKaosKaki = v; scheduleSave(); });
+      tdTipe.classList.add('td-tipeKaosKaki');
+      tr.appendChild(tdTipe);
+
+      // Right-side columns (only on first produk row, with rowspan)
+      if (pi === 0) {
+        // ekspedisi
+        const tdEksp = makeSelectTd(
+          ['J&T','J&T Express','SiCepat','Anteraja','Shopee Express','Instant','Batal','Gosend'],
+          order.ekspedisi,
+          (v, td) => {
+            const prev = order.ekspedisi;
+            order.ekspedisi = v;
+            applyExpStyle(td, v);
+            if (v.toLowerCase()==='instant' && prev.toLowerCase()!=='instant') playInstant();
+            if (v.toLowerCase()==='batal' && prev.toLowerCase()!=='batal') playBatal();
+            scheduleSave();
+          }, 'ekspedisi');
+        tdEksp.rowSpan = produkCount;
+        tr.appendChild(tdEksp);
+
+        const tdPack = makeSelectTd(['Sudah','Belum','Proses'], order.packing,
+          (v, td) => { order.packing = v; applyStatusStyle(td, v); scheduleSave(); }, 'status');
+        tdPack.rowSpan = produkCount;
+        tr.appendChild(tdPack);
+
+        const tdNm = makeSelectTd(['Lala','Budi','Sari','Adi','Rini'], order.nama,
+          (v) => { order.nama = v; scheduleSave(); });
+        tdNm.rowSpan = produkCount;
+        tr.appendChild(tdNm);
+
+        const tdKirim = makeSelectTd(['Sudah','Belum','Proses'], order.kirim,
+          (v, td) => { order.kirim = v; applyStatusStyle(td, v); scheduleSave(); }, 'status');
+        tdKirim.rowSpan = produkCount;
+        tr.appendChild(tdKirim);
+
+        const tdLink = makeTextTd(order.link, v => { order.link = v; scheduleSave(); });
+        tdLink.querySelector('input').placeholder = 'https://...';
+        tdLink.rowSpan = produkCount;
+        tr.appendChild(tdLink);
+
+        const tdCD = makeTextTd(order.countdown, v => { order.countdown = v; scheduleSave(); }, 'center');
+        tdCD.rowSpan = produkCount;
+        tr.appendChild(tdCD);
+      }
+
+      tbody.appendChild(tr);
+      displayRowCount++;
+    });
+  }
+
+  // Empty rows to fill up to TOTAL_ROWS visual slots
+  const emptyCount = Math.max(0, TOTAL_ROWS - orders.length);
+  for (let e = 0; e < emptyCount; e++) {
+    const tr = document.createElement('tr');
+    tr.className = 'empty-row';
+    const rn = document.createElement('td');
+    rn.className = 'rn empty-rn';
+    rn.textContent = orders.length + e + 1;
+    tr.appendChild(rn);
+    for (let c = 0; c < 15; c++) tr.appendChild(document.createElement('td'));
     tbody.appendChild(tr);
   }
 }
@@ -531,11 +819,12 @@ async function syncToSheets() {
   const btn = document.querySelector('button.primary');
   btn.textContent = '⏳ Mengirim...'; btn.disabled = true;
   try {
-    const values = [['Tgl','No','Kode Booking','Alamat','Produk','Nama Produk','Ukuran','Tipe Kaos Kaki','Ekspedisi','Packing','Nama','Kirim','Link','Countdown']];
+    const values = [['Tgl','No','Kode Booking','Alamat','#Produk','Produk','Nama Produk','Ukuran','Tipe Kaos Kaki','Ekspedisi','Packing','Nama','Kirim','Link','Countdown']];
     orders.forEach(o => {
       o.produkList.forEach((p, pi) => {
         values.push([
           pi===0?o.tgl:'', pi===0?o.no:'', pi===0?o.kodeBooking:'', pi===0?o.alamat:'',
+          pi===0?o.produkList.length:'',
           p.produk, p.namaProduk, p.ukuran, p.tipeKaosKaki,
           pi===0?o.ekspedisi:'', pi===0?o.packing:'', pi===0?o.nama:'',
           pi===0?o.kirim:'', pi===0?o.link:'', pi===0?o.countdown:''
@@ -557,11 +846,12 @@ async function syncToSheets() {
 }
 
 function showSyncFallback() {
-  const lines = [['Tgl','No','Kode Booking','Alamat','Produk','Nama Produk','Ukuran','Tipe Kaos Kaki','Ekspedisi','Packing','Nama','Kirim','Link','Countdown'].join('\t')];
+  const lines = [['Tgl','No','Kode Booking','Alamat','#Produk','Produk','Nama Produk','Ukuran','Tipe Kaos Kaki','Ekspedisi','Packing','Nama','Kirim','Link','Countdown'].join('\t')];
   orders.forEach(o => {
     o.produkList.forEach((p, pi) => {
       lines.push([
         pi===0?o.tgl:'', pi===0?o.no:'', pi===0?o.kodeBooking:'', pi===0?o.alamat:'',
+        pi===0?o.produkList.length:'',
         p.produk, p.namaProduk, p.ukuran, p.tipeKaosKaki,
         pi===0?o.ekspedisi:'', pi===0?o.packing:'', pi===0?o.nama:'',
         pi===0?o.kirim:'', pi===0?o.link:'', pi===0?o.countdown:''
@@ -601,12 +891,9 @@ function toggleSound() {
 
 // ===================== KEYBOARD SHORTCUTS =====================
 document.addEventListener('keydown', (e) => {
-  // Ctrl+Delete / Ctrl+Backspace → hapus pesanan terpilih
   if ((e.key === 'Delete' || e.key === 'Backspace') && e.ctrlKey && selectedOrders.size > 0) {
     deleteSelected();
   }
-
-  // Cmd+Option+Shift+0 (Mac) / Ctrl+Alt+Shift+0 (Win) → tambah produk ke pesanan terpilih
   const isMac = e.metaKey && e.altKey && e.shiftKey && e.key === '0';
   const isWin = e.ctrlKey && e.altKey && e.shiftKey && e.key === '0';
   if (isMac || isWin) {
@@ -617,17 +904,26 @@ document.addEventListener('keydown', (e) => {
     } else if (orders.length > 0) {
       targetIdx = orders.length - 1;
     }
-    if (targetIdx >= 0) {
-      addProdukToOrder(targetIdx);
-    }
+    if (targetIdx >= 0) addProdukToOrder(targetIdx);
   }
 });
 
 // ===================== INIT =====================
-orders.push(makeOrder(0));
-renumberOrders();
+const restored = loadFromLocalStorage();
+if (!restored) {
+  orders.push(makeOrder(0));
+  renumberOrders();
+}
+
 renderAll();
+applyFilter();
 updateStatus();
+
+if (restored) {
+  setAutosaveIndicator('saved');
+  document.getElementById('status-bar').textContent =
+    `♻️ Data dipulihkan • ${orders.length} pesanan • ${orders.reduce((s,o)=>s+o.produkList.length,0)} produk`;
+}
 </script>
 </body>
 </html>
