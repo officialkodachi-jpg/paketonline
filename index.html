@@ -8,7 +8,6 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: Arial, sans-serif; font-size: 12px; background: #fff; color: #000; }
 
-  /* ===== TOOLBAR ===== */
   #toolbar {
     display: flex; align-items: center; gap: 6px; padding: 4px 8px;
     background: #f8f9fa; border-bottom: 1px solid #dadce0; flex-wrap: wrap;
@@ -23,50 +22,10 @@
   #toolbar button.primary:hover { background: #0b8043; }
   #toolbar button.danger { background: #ea4335; color: #fff; border-color: #ea4335; }
   #toolbar button.danger:hover { background: #c5221f; }
-  #toolbar .sep { width: 1px; height: 20px; background: #dadce0; flex-shrink: 0; }
-  #status-bar { font-size: 11px; color: #666; margin-left: auto; white-space: nowrap; }
+  #toolbar .sep { width: 1px; height: 20px; background: #dadce0; }
+  #toolbar select { font-size: 11px; border: 1px solid #dadce0; padding: 3px 6px; border-radius: 3px; }
+  #status-bar { font-size: 11px; color: #666; margin-left: auto; }
 
-  #shortcut-hint {
-    font-size: 10px; color: #555; background: #f1f3f4;
-    border: 1px solid #dadce0; border-radius: 3px;
-    padding: 2px 8px; white-space: nowrap; cursor: default;
-  }
-  #shortcut-hint kbd {
-    background: #e8e8e8; border: 1px solid #ccc; border-radius: 2px;
-    padding: 0 3px; font-size: 10px; font-family: monospace;
-  }
-
-  /* ===== FILTER BAR ===== */
-  #filter-bar {
-    display: flex; align-items: center; gap: 8px; padding: 4px 8px;
-    background: #fff9e6; border-bottom: 1px solid #ffe082; flex-wrap: wrap;
-  }
-  #filter-bar label { font-size: 11px; color: #555; font-weight: 600; }
-  #filter-bar input[type=text] {
-    padding: 3px 8px; font-size: 11px; border: 1px solid #dadce0;
-    border-radius: 3px; width: 180px;
-  }
-  #filter-bar select {
-    padding: 3px 6px; font-size: 11px; border: 1px solid #dadce0;
-    border-radius: 3px; background: #fff;
-  }
-  #filter-bar button {
-    padding: 3px 8px; font-size: 11px; border: 1px solid #dadce0;
-    border-radius: 3px; background: #fff; cursor: pointer;
-  }
-  #filter-bar button:hover { background: #e8f0fe; }
-  #filter-count { font-size: 11px; color: #888; margin-left: 4px; }
-
-  /* ===== AUTOSAVE INDICATOR ===== */
-  #autosave-indicator {
-    font-size: 10px; padding: 2px 8px; border-radius: 10px;
-    transition: all 0.3s;
-  }
-  #autosave-indicator.saved { color: #0f9d58; }
-  #autosave-indicator.saving { color: #f9a825; }
-  #autosave-indicator.unsaved { color: #ea4335; }
-
-  /* ===== SHEET TABS ===== */
   #sheet-tabs {
     display: flex; align-items: center; padding: 0 8px;
     background: #f1f3f4; border-bottom: 1px solid #dadce0; height: 28px;
@@ -79,7 +38,6 @@
   }
   #sheet-tabs .tab.active { background: #fff; border-color: #dadce0; color: #000; font-weight: bold; }
 
-  /* ===== FORMULA BAR ===== */
   #formula-bar {
     display: flex; align-items: center; padding: 2px 8px; gap: 6px;
     border-bottom: 1px solid #dadce0; background: #fff; height: 26px;
@@ -88,8 +46,7 @@
   #formula-bar .fx { color: #666; font-size: 12px; font-style: italic; }
   #cell-val { flex: 1; font-size: 11px; border: none; outline: none; }
 
-  /* ===== TABLE ===== */
-  #table-wrap { overflow: auto; height: calc(100vh - 165px); }
+  #table-wrap { overflow: auto; height: calc(100vh - 140px); }
   table { border-collapse: collapse; table-layout: fixed; width: max-content; min-width: 100%; }
   thead { position: sticky; top: 0; z-index: 10; }
 
@@ -97,12 +54,10 @@
     background: #f8f9fa; border: 1px solid #dadce0; text-align: center;
     color: #666; font-size: 11px; width: 30px; min-width: 30px;
     user-select: none; position: sticky; left: 0; z-index: 5;
-    cursor: pointer; vertical-align: middle;
+    cursor: pointer;
   }
   .rn:hover { background: #e8f0fe; }
   .rn.selected-rn { background: #c8d8f8; }
-  .rn.empty-rn { color: #ddd; cursor: default; }
-  .rn.empty-rn:hover { background: #f8f9fa; }
   thead .rn { background: #f1f3f4; z-index: 15; cursor: default; }
   thead .rn:hover { background: #f1f3f4; }
 
@@ -129,32 +84,24 @@
   }
   td select { cursor: pointer; }
 
-  .order-row:hover td:not(.rn) { background: #f8f9ff; }
-  .order-row.row-selected td { background: #e8f0fe !important; }
-  .order-row.row-selected .rn { background: #c8d8f8 !important; }
-
-  /* Sub-product rows */
-  .sub-row td:not(.td-produk):not(.td-namaProduk):not(.td-ukuran):not(.td-tipeKaosKaki) {
-    background: #f5f5f5 !important;
-  }
-  .sub-row:hover td:not(.rn) { background: #f0f0f8 !important; }
-  .sub-row .td-produk-no {
-    background: #f0f0f0; color: #999; font-size: 10px;
-    text-align: center; border: 1px solid #dadce0;
-    vertical-align: middle; font-style: italic;
-    cursor: pointer; user-select: none;
-  }
-  .sub-row .td-produk-no:hover { background: #ffe0e0; color: #c00; }
+  /* Produk sub-rows */
+  .produk-row td { background: #f0f8ff; height: 20px; }
+  .produk-row td input, .produk-row td select { font-size: 10px; }
+  .produk-row .rn { font-size: 9px; color: #999; }
 
   /* Add-produk button cell */
-  .td-add-produk {
-    text-align: center; cursor: pointer; background: #f9fff9 !important;
-    border: 1px dashed #92d050 !important; color: #0f9d58;
-    font-size: 10px; vertical-align: middle;
+  .add-produk-cell {
+    text-align: center; background: #f9fff9 !important;
+    cursor: pointer; font-size: 10px; color: #0f9d58; font-weight: bold;
+    border: 1px dashed #ccc !important;
   }
-  .td-add-produk:hover { background: #e8f5e9 !important; }
+  .add-produk-cell:hover { background: #e6f4ea !important; }
 
-  .empty-row td { background: #fafafa; }
+  /* Row colors */
+  .order-row:hover td { background: #f8f9ff; }
+  .order-row.row-selected td { background: #e8f0fe !important; }
+  .order-row.row-selected .rn { background: #c8d8f8 !important; }
+  .produk-row.row-selected td { background: #dce8fd !important; }
 
   /* STATUS COLORS */
   td.status-sudah { background: #c6efce !important; }
@@ -164,10 +111,8 @@
   td.status-batal { background: #ff0000 !important; color: #fff; font-weight: bold; }
   td.status-jnt { background: #e2efda !important; }
 
-  /* HIDDEN row (filtered out) */
-  tr.filtered-hidden { display: none; }
+  td.sel-range { background: rgba(66,133,244,0.18) !important; outline: 1px solid #4285f4; }
 
-  /* ===== SOUND INDICATOR ===== */
   #sound-indicator {
     position: fixed; top: 50px; right: 20px; padding: 8px 16px;
     border-radius: 6px; font-size: 13px; font-weight: bold;
@@ -175,14 +120,13 @@
   }
   #sound-indicator.instant { background: #00b0f0; color: #fff; }
   #sound-indicator.batal { background: #ff0000; color: #fff; }
-  #sound-indicator.addproduk { background: #0f9d58; color: #fff; }
   @keyframes fadeout { 0%{opacity:1} 70%{opacity:1} 100%{opacity:0} }
 
   #table-wrap::-webkit-scrollbar { width: 8px; height: 8px; }
   #table-wrap::-webkit-scrollbar-track { background: #f1f1f1; }
   #table-wrap::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 4px; }
 
-  /* ===== MODAL ===== */
+  /* MODAL */
   #modal-overlay {
     display: none; position: fixed; inset: 0;
     background: rgba(0,0,0,0.5); z-index: 1000;
@@ -202,15 +146,14 @@
   #modal .modal-btns button { padding: 6px 14px; border-radius: 4px; cursor: pointer; font-size: 12px; }
   #modal .modal-btns .ok { background: #0f9d58; color: #fff; border: none; }
   #modal .modal-btns .cancel { background: #fff; border: 1px solid #dadce0; }
+  #progress { font-size: 11px; color: #0f9d58; margin-top: 6px; display: none; }
 
+  /* tooltip for delete count */
   #del-badge {
     display: none; background: #ea4335; color: #fff;
     border-radius: 10px; font-size: 10px; padding: 1px 6px;
     margin-left: 2px;
   }
-
-  /* Highlight search match */
-  .search-match { background: #fff176 !important; }
 </style>
 </head>
 <body>
@@ -224,6 +167,7 @@
     <p style="font-size:11px;color:#666;margin-bottom:8px;">Masukkan Spreadsheet ID dari URL Google Sheets kamu:</p>
     <input id="sheet-id-input" placeholder="Contoh: 108S_LT2zesCXG05IBQh61QjEI3TyFdOg2Ddxe5cYMaY" />
     <input id="sheet-name-input" placeholder="Nama sheet (default: Sheet1)" value="Sheet1" />
+    <div id="progress"></div>
     <div class="modal-btns">
       <button class="cancel" onclick="closeModal()">Batal</button>
       <button class="ok" onclick="saveSheetId()">Simpan</button>
@@ -236,7 +180,7 @@
   <span class="logo">📦 Kodachi Paket</span>
   <div class="sep"></div>
   <button onclick="addOrder()">➕ Tambah Pesanan</button>
-  <button class="danger" onclick="deleteSelected()">
+  <button class="danger" onclick="deleteSelected()" title="Hapus baris/pesanan yang dipilih (bisa multiple)">
     🗑️ Hapus <span id="del-badge"></span>
   </button>
   <div class="sep"></div>
@@ -246,45 +190,7 @@
   <button onclick="toggleSound()" id="sound-btn">🔊 Suara: ON</button>
   <button onclick="clearAll()">🧹 Clear All</button>
   <div class="sep"></div>
-  <span id="shortcut-hint" title="Klik nomor baris untuk pilih, lalu tekan shortcut untuk tambah produk ke pesanan tersebut">
-    ➕ Produk: <kbd>Ctrl+Alt+Shift+0</kbd> (Win) &nbsp;/&nbsp; <kbd>⌘⌥⇧0</kbd> (Mac)
-  </span>
-  <span id="autosave-indicator" class="saved">💾 Tersimpan</span>
   <span id="status-bar">Siap • 0 pesanan</span>
-</div>
-
-<!-- FILTER BAR -->
-<div id="filter-bar">
-  <label>🔍</label>
-  <input type="text" id="search-input" placeholder="Cari nama, alamat, kode booking..." oninput="applyFilter()" />
-  <label>Ekspedisi:</label>
-  <select id="filter-ekspedisi" onchange="applyFilter()">
-    <option value="">Semua</option>
-    <option>J&amp;T</option>
-    <option>J&amp;T Express</option>
-    <option>SiCepat</option>
-    <option>Anteraja</option>
-    <option>Shopee Express</option>
-    <option>Instant</option>
-    <option>Batal</option>
-    <option>Gosend</option>
-  </select>
-  <label>Packing:</label>
-  <select id="filter-packing" onchange="applyFilter()">
-    <option value="">Semua</option>
-    <option>Sudah</option>
-    <option>Belum</option>
-    <option>Proses</option>
-  </select>
-  <label>Kirim:</label>
-  <select id="filter-kirim" onchange="applyFilter()">
-    <option value="">Semua</option>
-    <option>Sudah</option>
-    <option>Belum</option>
-    <option>Proses</option>
-  </select>
-  <button onclick="clearFilter()">✖ Reset Filter</button>
-  <span id="filter-count"></span>
 </div>
 
 <!-- SHEET TABS -->
@@ -306,7 +212,8 @@
   <tr>
     <th class="rn" rowspan="2">#</th>
     <th class="group-raw" colspan="4">Raw Data-Paket</th>
-    <th class="group-parsing" colspan="4">Parsing Produk DATA-Paket</th>
+    <th class="group-parsing" colspan="3">Parsing Produk DATA-Paket</th>
+    <th colspan="1" style="background:#f1f3f4"></th>
     <th class="group-1" colspan="1">1</th>
     <th class="group-3" colspan="2">3</th>
     <th class="group-resi" colspan="1">Resi</th>
@@ -317,7 +224,6 @@
     <th style="width:30px">No</th>
     <th style="width:120px">Kode Booking</th>
     <th style="width:200px">Alamat</th>
-    <th style="width:30px">#P</th>
     <th style="width:180px">Produk</th>
     <th style="width:140px">Nama Produk</th>
     <th style="width:50px">Ukuran</th>
@@ -336,60 +242,17 @@
 
 <script>
 // ===================== STATE =====================
-const TOTAL_ROWS = 77;
+// orders: array of order objects
+// Each order: { tgl, no, kodeBooking, alamat, ekspedisi, packing, nama, kirim, link, countdown,
+//               produkList: [{produk, namaProduk, ukuran, tipeKaosKaki}, ...] }
 let orders = [];
 let soundEnabled = true;
 let sheetId = localStorage.getItem('sheetId') || '108S_LT2zesCXG05IBQh61QjEI3TyFdOg2Ddxe5cYMaY';
 let sheetName = localStorage.getItem('sheetName') || 'Sheet1';
+
+// Selection: set of order indices (for multi-select via row-number click)
 let selectedOrders = new Set();
 let lastSelectedOrder = -1;
-let autosaveTimer = null;
-
-// ===================== LOCAL STORAGE AUTO-SAVE =====================
-const LS_KEY = 'kodachi_paket_orders';
-
-function saveToLocalStorage() {
-  try {
-    localStorage.setItem(LS_KEY, JSON.stringify(orders));
-    setAutosaveIndicator('saved');
-  } catch(e) {
-    setAutosaveIndicator('unsaved');
-  }
-}
-
-function loadFromLocalStorage() {
-  try {
-    const raw = localStorage.getItem(LS_KEY);
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed) && parsed.length > 0) {
-        orders = parsed;
-        // Ensure all orders have produkList (backward compat)
-        orders.forEach(o => {
-          if (!Array.isArray(o.produkList)) o.produkList = [makeProduk()];
-        });
-        return true;
-      }
-    }
-  } catch(e) {}
-  return false;
-}
-
-function setAutosaveIndicator(state) {
-  const el = document.getElementById('autosave-indicator');
-  el.className = state;
-  if (state === 'saved') el.textContent = '💾 Tersimpan';
-  else if (state === 'saving') el.textContent = '💾 Menyimpan...';
-  else el.textContent = '⚠️ Belum tersimpan';
-}
-
-function scheduleSave() {
-  setAutosaveIndicator('saving');
-  if (autosaveTimer) clearTimeout(autosaveTimer);
-  autosaveTimer = setTimeout(() => {
-    saveToLocalStorage();
-  }, 800);
-}
 
 // ===================== SOUND =====================
 const AudioCtx = window.AudioContext || window.webkitAudioContext;
@@ -443,11 +306,11 @@ function makeProduk() {
   return { produk: '', namaProduk: '', ukuran: '', tipeKaosKaki: '' };
 }
 
-function makeOrder(idx) {
+function makeOrder() {
   const today = new Date();
   const d = String(today.getDate()).padStart(2,'0')+'/'+String(today.getMonth()+1).padStart(2,'0');
   return {
-    tgl: d, no: idx+1, kodeBooking: '', alamat: '',
+    tgl: d, no: orders.length+1, kodeBooking: '', alamat: '',
     ekspedisi: 'J&T', packing: 'Sudah', nama: 'Lala', kirim: 'Sudah',
     link: '', countdown: '',
     produkList: [makeProduk()]
@@ -455,40 +318,26 @@ function makeOrder(idx) {
 }
 
 function addOrder() {
-  if (orders.length >= TOTAL_ROWS) {
-    showIndicator('batal', '⚠️ Maksimal 77 baris');
-    return;
-  }
-  orders.push(makeOrder(orders.length));
+  orders.push(makeOrder());
   renumberOrders();
   renderAll();
-  applyFilter();
   updateStatus();
-  scheduleSave();
-  const rows = document.querySelectorAll('#tbody .order-row');
-  const lastFilled = rows[orders.length - 1];
-  if (lastFilled) lastFilled.scrollIntoView({behavior:'smooth', block:'nearest'});
+  const tbody = document.getElementById('tbody');
+  tbody.lastElementChild?.scrollIntoView({behavior:'smooth', block:'nearest'});
 }
 
 function addProdukToOrder(orderIdx) {
-  if (orderIdx < 0 || orderIdx >= orders.length) return;
   orders[orderIdx].produkList.push(makeProduk());
-  const n = orders[orderIdx].produkList.length;
-  showIndicator('addproduk', `➕ Produk ke-${n} di baris ${orderIdx+1}`);
   renderAll();
-  applyFilter();
-  updateStatus();
-  scheduleSave();
 }
 
 function removeProdukFromOrder(orderIdx, produkIdx) {
-  if (orders[orderIdx].produkList.length <= 1) return; // jangan hapus produk terakhir
-  if (!confirm(`Hapus produk ke-${produkIdx+1} dari pesanan ${orderIdx+1}?`)) return;
+  if (orders[orderIdx].produkList.length <= 1) {
+    alert('Minimal harus ada 1 produk per pesanan.');
+    return;
+  }
   orders[orderIdx].produkList.splice(produkIdx, 1);
   renderAll();
-  applyFilter();
-  updateStatus();
-  scheduleSave();
 }
 
 function renumberOrders() {
@@ -497,8 +346,8 @@ function renumberOrders() {
 
 // ===================== MULTI-SELECT & DELETE =====================
 function toggleOrderSelect(orderIdx, e) {
-  if (orderIdx >= orders.length) return;
   if (e.shiftKey && lastSelectedOrder >= 0) {
+    // range select
     const lo = Math.min(lastSelectedOrder, orderIdx);
     const hi = Math.max(lastSelectedOrder, orderIdx);
     for (let i = lo; i <= hi; i++) selectedOrders.add(i);
@@ -516,7 +365,6 @@ function toggleOrderSelect(orderIdx, e) {
   lastSelectedOrder = orderIdx;
   updateDeleteBadge();
   renderAll();
-  applyFilter();
 }
 
 function updateDeleteBadge() {
@@ -543,9 +391,7 @@ function deleteSelected() {
   renumberOrders();
   updateDeleteBadge();
   renderAll();
-  applyFilter();
   updateStatus();
-  scheduleSave();
 }
 
 function clearAll() {
@@ -555,227 +401,223 @@ function clearAll() {
   lastSelectedOrder = -1;
   updateDeleteBadge();
   renderAll();
-  applyFilter();
   updateStatus();
-  scheduleSave();
-}
-
-// ===================== FILTER & SEARCH =====================
-function applyFilter() {
-  const search = document.getElementById('search-input').value.trim().toLowerCase();
-  const fEksp = document.getElementById('filter-ekspedisi').value;
-  const fPack = document.getElementById('filter-packing').value;
-  const fKirim = document.getElementById('filter-kirim').value;
-
-  const allOrderRows = document.querySelectorAll('#tbody tr[data-order-idx]');
-  const visible = new Set();
-
-  orders.forEach((o, idx) => {
-    let show = true;
-    if (fEksp && o.ekspedisi !== fEksp) show = false;
-    if (fPack && o.packing !== fPack) show = false;
-    if (fKirim && o.kirim !== fKirim) show = false;
-    if (search) {
-      const haystack = [
-        o.tgl, o.kodeBooking, o.alamat, o.nama, o.link, o.countdown,
-        ...o.produkList.map(p => [p.produk, p.namaProduk, p.ukuran, p.tipeKaosKaki]).flat()
-      ].join(' ').toLowerCase();
-      if (!haystack.includes(search)) show = false;
-    }
-    if (show) visible.add(idx);
-  });
-
-  allOrderRows.forEach(tr => {
-    const idx = parseInt(tr.dataset.orderIdx);
-    if (visible.has(idx) || isNaN(idx)) {
-      tr.classList.remove('filtered-hidden');
-    } else {
-      tr.classList.add('filtered-hidden');
-    }
-  });
-
-  // Empty rows
-  document.querySelectorAll('#tbody tr.empty-row').forEach(tr => {
-    const hasActive = document.querySelectorAll('#tbody tr[data-order-idx]:not(.filtered-hidden)').length;
-    tr.classList.toggle('filtered-hidden', fEksp || fPack || fKirim || search);
-  });
-
-  const activeFilter = fEksp || fPack || fKirim || search;
-  const countEl = document.getElementById('filter-count');
-  if (activeFilter) {
-    countEl.textContent = `Tampil ${visible.size} dari ${orders.length} pesanan`;
-  } else {
-    countEl.textContent = '';
-  }
-}
-
-function clearFilter() {
-  document.getElementById('search-input').value = '';
-  document.getElementById('filter-ekspedisi').value = '';
-  document.getElementById('filter-packing').value = '';
-  document.getElementById('filter-kirim').value = '';
-  applyFilter();
 }
 
 // ===================== RENDER =====================
 function renderAll() {
   const tbody = document.getElementById('tbody');
   tbody.innerHTML = '';
-  let displayRowCount = 0;
 
-  for (let orderIdx = 0; orderIdx < orders.length; orderIdx++) {
-    const order = orders[orderIdx];
-    const isSelected = selectedOrders.has(orderIdx);
+  orders.forEach((order, oi) => {
+    const isSelected = selectedOrders.has(oi);
     const produkCount = order.produkList.length;
 
-    order.produkList.forEach((p, pi) => {
-      const tr = document.createElement('tr');
-      tr.dataset.orderIdx = orderIdx;
-      tr.dataset.produkIdx = pi;
-
-      if (pi === 0) {
-        tr.className = 'order-row' + (isSelected ? ' row-selected' : '');
-      } else {
-        tr.className = 'sub-row order-row' + (isSelected ? ' row-selected' : '');
-      }
-
-      // Row number (rowspan on first produk row)
-      if (pi === 0) {
-        const rn = document.createElement('td');
-        rn.className = 'rn' + (isSelected ? ' selected-rn' : '');
-        rn.textContent = orderIdx + 1;
-        rn.rowSpan = produkCount;
-        rn.title = 'Klik pilih • Shift+klik range • Ctrl+klik multi';
-        rn.onclick = (e) => toggleOrderSelect(orderIdx, e);
-        tr.appendChild(rn);
-      }
-
-      // Raw data columns (only on first produk row)
-      if (pi === 0) {
-        tr.appendChild(makeTextTd(order.tgl, v => { order.tgl = v; scheduleSave(); }, 'center'));
-        tr.appendChild(makeTextTd(String(order.no), v => { order.no = v; scheduleSave(); }, 'center'));
-        tr.appendChild(makeTextTd(order.kodeBooking, v => { order.kodeBooking = v; scheduleSave(); }));
-        tr.appendChild(makeTextTd(order.alamat, v => { order.alamat = v; scheduleSave(); }));
-      } else {
-        // Spanned: add merged empty tds (they won't show due to rowspan, but we skip them)
-        // Actually for rowspan to work across multiple sub-rows we DON'T add these cells
-        // We only skip them for sub-rows
-      }
-
-      // Produk number cell
-      const tdPNo = document.createElement('td');
-      if (pi === 0) {
-        // Show add-produk button on first row
-        tdPNo.className = 'td-add-produk';
-        tdPNo.title = 'Klik untuk tambah produk ke pesanan ini';
-        tdPNo.innerHTML = produkCount === 1
-          ? `<span style="color:#0f9d58;font-size:11px">+</span>`
-          : `<span style="color:#0f9d58;font-size:10px">+${produkCount}</span>`;
-        tdPNo.onclick = () => addProdukToOrder(orderIdx);
-      } else {
-        tdPNo.className = 'td-produk-no';
-        tdPNo.title = `Klik untuk hapus produk ke-${pi+1}`;
-        tdPNo.textContent = `p${pi+1} ✕`;
-        tdPNo.onclick = () => removeProdukFromOrder(orderIdx, pi);
-      }
-      tr.appendChild(tdPNo);
-
-      // Produk fields
-      const tdProduk = makeTextTd(p.produk, v => { p.produk = v; scheduleSave(); });
-      tdProduk.classList.add('td-produk');
-      tr.appendChild(tdProduk);
-
-      const tdNama = makeTextTd(p.namaProduk, v => { p.namaProduk = v; scheduleSave(); });
-      tdNama.classList.add('td-namaProduk');
-      tr.appendChild(tdNama);
-
-      const tdUkuran = makeTextTd(p.ukuran, v => { p.ukuran = v; scheduleSave(); }, 'center');
-      tdUkuran.classList.add('td-ukuran');
-      tr.appendChild(tdUkuran);
-
-      const tdTipe = makeTextTd(p.tipeKaosKaki, v => { p.tipeKaosKaki = v; scheduleSave(); });
-      tdTipe.classList.add('td-tipeKaosKaki');
-      tr.appendChild(tdTipe);
-
-      // Right-side columns (only on first produk row, with rowspan)
-      if (pi === 0) {
-        // ekspedisi
-        const tdEksp = makeSelectTd(
-          ['J&T','J&T Express','SiCepat','Anteraja','Shopee Express','Instant','Batal','Gosend'],
-          order.ekspedisi,
-          (v, td) => {
-            const prev = order.ekspedisi;
-            order.ekspedisi = v;
-            applyExpStyle(td, v);
-            if (v.toLowerCase()==='instant' && prev.toLowerCase()!=='instant') playInstant();
-            if (v.toLowerCase()==='batal' && prev.toLowerCase()!=='batal') playBatal();
-            scheduleSave();
-          }, 'ekspedisi');
-        tdEksp.rowSpan = produkCount;
-        tr.appendChild(tdEksp);
-
-        const tdPack = makeSelectTd(['Sudah','Belum','Proses'], order.packing,
-          (v, td) => { order.packing = v; applyStatusStyle(td, v); scheduleSave(); }, 'status');
-        tdPack.rowSpan = produkCount;
-        tr.appendChild(tdPack);
-
-        const tdNm = makeSelectTd(['Lala','Budi','Sari','Adi','Rini'], order.nama,
-          (v) => { order.nama = v; scheduleSave(); });
-        tdNm.rowSpan = produkCount;
-        tr.appendChild(tdNm);
-
-        const tdKirim = makeSelectTd(['Sudah','Belum','Proses'], order.kirim,
-          (v, td) => { order.kirim = v; applyStatusStyle(td, v); scheduleSave(); }, 'status');
-        tdKirim.rowSpan = produkCount;
-        tr.appendChild(tdKirim);
-
-        const tdLink = makeTextTd(order.link, v => { order.link = v; scheduleSave(); });
-        tdLink.querySelector('input').placeholder = 'https://...';
-        tdLink.rowSpan = produkCount;
-        tr.appendChild(tdLink);
-
-        const tdCD = makeTextTd(order.countdown, v => { order.countdown = v; scheduleSave(); }, 'center');
-        tdCD.rowSpan = produkCount;
-        tr.appendChild(tdCD);
-      }
-
-      tbody.appendChild(tr);
-      displayRowCount++;
-    });
-  }
-
-  // Empty rows to fill up to TOTAL_ROWS visual slots
-  const emptyCount = Math.max(0, TOTAL_ROWS - orders.length);
-  for (let e = 0; e < emptyCount; e++) {
+    // === MAIN ORDER ROW ===
     const tr = document.createElement('tr');
-    tr.className = 'empty-row';
+    tr.className = 'order-row' + (isSelected ? ' row-selected' : '');
+
+    // Row number (sticky, clickable for select)
     const rn = document.createElement('td');
-    rn.className = 'rn empty-rn';
-    rn.textContent = orders.length + e + 1;
+    rn.className = 'rn' + (isSelected ? ' selected-rn' : '');
+    rn.textContent = order.no;
+    rn.title = 'Klik untuk pilih • Shift+klik range • Ctrl+klik multi';
+    rn.onclick = (e) => toggleOrderSelect(oi, e);
     tr.appendChild(rn);
-    for (let c = 0; c < 15; c++) tr.appendChild(document.createElement('td'));
+
+    // tgl (merged)
+    const tdTgl = makeTextTd(order.tgl, produkCount, (v) => order.tgl = v, 'center');
+    tr.appendChild(tdTgl);
+
+    // no (merged)
+    const tdNo = makeTextTd(order.no, produkCount, (v) => order.no = v, 'center');
+    tr.appendChild(tdNo);
+
+    // kodeBooking (merged)
+    const tdKode = makeTextTd(order.kodeBooking, produkCount, (v) => order.kodeBooking = v);
+    tr.appendChild(tdKode);
+
+    // alamat (merged)
+    const tdAlamat = makeTextTd(order.alamat, produkCount, (v) => order.alamat = v);
+    tr.appendChild(tdAlamat);
+
+    // Produk (first produk inline in order row)
+    const p0 = order.produkList[0];
+    const tdProduk = makeTextTd(p0.produk, 1, (v) => { p0.produk = v; });
+    tr.appendChild(tdProduk);
+
+    const tdNama = makeTextTd(p0.namaProduk, 1, (v) => { p0.namaProduk = v; });
+    tr.appendChild(tdNama);
+
+    const tdUkuran = makeTextTd(p0.ukuran, 1, (v) => { p0.ukuran = v; }, 'center');
+    tr.appendChild(tdUkuran);
+
+    const tdTipe = makeTextTd(p0.tipeKaosKaki, 1, (v) => { p0.tipeKaosKaki = v; });
+    tr.appendChild(tdTipe);
+
+    // ekspedisi (merged)
+    const tdEksp = makeSelectTd(['J&T','J&T Express','SiCepat','Anteraja','Shopee Express','Instant','Batal','Gosend'],
+      order.ekspedisi, produkCount, (v, td) => {
+        const prev = order.ekspedisi;
+        order.ekspedisi = v;
+        applyExpStyle(td, v);
+        if (v.toLowerCase()==='instant' && prev.toLowerCase()!=='instant') playInstant();
+        if (v.toLowerCase()==='batal' && prev.toLowerCase()!=='batal') playBatal();
+      }, 'ekspedisi');
+    tr.appendChild(tdEksp);
+
+    // packing (merged)
+    const tdPack = makeSelectTd(['Sudah','Belum','Proses'], order.packing, produkCount,
+      (v, td) => { order.packing = v; applyStatusStyle(td, v); }, 'status');
+    tr.appendChild(tdPack);
+
+    // nama (merged)
+    const tdNamaPetugas = makeSelectTd(['Lala','Budi','Sari','Adi','Rini'], order.nama, produkCount,
+      (v) => { order.nama = v; });
+    tr.appendChild(tdNamaPetugas);
+
+    // kirim (merged)
+    const tdKirim = makeSelectTd(['Sudah','Belum','Proses'], order.kirim, produkCount,
+      (v, td) => { order.kirim = v; applyStatusStyle(td, v); }, 'status');
+    tr.appendChild(tdKirim);
+
+    // link (merged)
+    const tdLink = makeTextTd(order.link, produkCount, (v) => order.link = v);
+    tdLink.querySelector('input').placeholder = 'https://...';
+    tr.appendChild(tdLink);
+
+    // countdown (merged)
+    const tdCd = makeTextTd(order.countdown, produkCount, (v) => order.countdown = v, 'center');
+    tr.appendChild(tdCd);
+
     tbody.appendChild(tr);
-  }
+
+    // === EXTRA PRODUK ROWS (produkList[1..n]) ===
+    for (let pi = 1; pi < order.produkList.length; pi++) {
+      const px = order.produkList[pi];
+      const trPx = document.createElement('tr');
+      trPx.className = 'produk-row' + (isSelected ? ' row-selected' : '');
+
+      // rn cell (empty / remove button)
+      const rnPx = document.createElement('td');
+      rnPx.className = 'rn';
+      rnPx.style.fontSize = '9px';
+      rnPx.title = 'Hapus produk ini';
+      rnPx.textContent = '×';
+      rnPx.style.cursor = 'pointer';
+      rnPx.style.color = '#ea4335';
+      rnPx.onclick = () => removeProdukFromOrder(oi, pi);
+      trPx.appendChild(rnPx);
+
+      // Empty merged cells (tgl, no, kodeBooking, alamat) — rowspan is handled by parent
+      // We just need blank tds to fill the columns they span
+      // Actually since merged via rowspan, we skip those cells here.
+      // But we still need placeholders for the produk columns.
+      // The merged cells (tgl, no, kodeBooking, alamat, ekspedisi, packing, nama, kirim, link, countdown)
+      // are handled by rowspan in the first row. Here we only render produk columns.
+      // Since HTML table rowspan works column-by-column, we insert only the produk cols.
+
+      // Insert empty spacer tds for the 4 "raw" merged columns
+      for (let i = 0; i < 4; i++) {
+        const sp = document.createElement('td');
+        sp.style.background = '#f8f9ff';
+        sp.style.borderTop = 'none';
+        trPx.appendChild(sp);
+      }
+
+      // produk
+      const tdPx = makeTextTd(px.produk, 1, (v) => px.produk = v);
+      tdPx.style.background = '#e8f4fd';
+      trPx.appendChild(tdPx);
+
+      const tdNamaPx = makeTextTd(px.namaProduk, 1, (v) => px.namaProduk = v);
+      tdNamaPx.style.background = '#e8f4fd';
+      trPx.appendChild(tdNamaPx);
+
+      const tdUkPx = makeTextTd(px.ukuran, 1, (v) => px.ukuran = v, 'center');
+      tdUkPx.style.background = '#e8f4fd';
+      trPx.appendChild(tdUkPx);
+
+      const tdTipePx = makeTextTd(px.tipeKaosKaki, 1, (v) => px.tipeKaosKaki = v);
+      tdTipePx.style.background = '#e8f4fd';
+      trPx.appendChild(tdTipePx);
+
+      // Spacer for ekspedisi, packing, nama, kirim, link, countdown
+      for (let i = 0; i < 6; i++) {
+        const sp = document.createElement('td');
+        sp.style.background = '#f8f9ff';
+        sp.style.borderTop = 'none';
+        trPx.appendChild(sp);
+      }
+
+      tbody.appendChild(trPx);
+    }
+
+    // === ADD PRODUK BUTTON ROW ===
+    const trAdd = document.createElement('tr');
+    trAdd.className = 'produk-row';
+    const rnAdd = document.createElement('td');
+    rnAdd.className = 'rn';
+    rnAdd.style.fontSize = '9px';
+    rnAdd.textContent = '+';
+    rnAdd.style.cursor = 'pointer';
+    rnAdd.style.color = '#0f9d58';
+    rnAdd.title = 'Tambah produk ke pesanan ini';
+    rnAdd.onclick = () => addProdukToOrder(oi);
+    trAdd.appendChild(rnAdd);
+
+    // 4 spacers
+    for (let i = 0; i < 4; i++) {
+      const sp = document.createElement('td');
+      sp.style.background = '#f9fff9'; sp.style.borderTop = 'none';
+      trAdd.appendChild(sp);
+    }
+
+    const addCell = document.createElement('td');
+    addCell.className = 'add-produk-cell';
+    addCell.colSpan = 4;
+    addCell.textContent = '+ Tambah Produk  ⌘⌥⇧0';
+    addCell.title = 'Tambah baris produk (⌘⌥⇧0 / Ctrl+Alt+Shift+0)';
+    addCell.onclick = () => addProdukToOrder(oi);
+    trAdd.appendChild(addCell);
+
+    // 6 spacers
+    for (let i = 0; i < 6; i++) {
+      const sp = document.createElement('td');
+      sp.style.background = '#f9fff9'; sp.style.borderTop = 'none';
+      trAdd.appendChild(sp);
+    }
+    tbody.appendChild(trAdd);
+  });
 }
 
 // ===================== TD HELPERS =====================
-function makeTextTd(val, onInput, align) {
+function makeTextTd(val, rowspan, onInput, align) {
   const td = document.createElement('td');
+  if (rowspan > 1) {
+    td.rowSpan = rowspan;
+    td.style.verticalAlign = 'middle';
+  }
   const inp = document.createElement('input');
   inp.type = 'text';
   inp.value = val ?? '';
   if (align) inp.style.textAlign = align;
-  inp.oninput = e => onInput(e.target.value);
+  inp.oninput = (e) => onInput(e.target.value);
   inp.onfocus = () => { td.style.outline = '2px solid #4285f4'; };
   inp.onblur = () => { td.style.outline = ''; };
   td.appendChild(inp);
   return td;
 }
 
-function makeSelectTd(options, val, onChange, styleType) {
+function makeSelectTd(options, val, rowspan, onChange, styleType) {
   const td = document.createElement('td');
+  if (rowspan > 1) {
+    td.rowSpan = rowspan;
+    td.style.verticalAlign = 'middle';
+  }
   if (styleType === 'ekspedisi') applyExpStyle(td, val);
   if (styleType === 'status') applyStatusStyle(td, val);
+
   const sel = document.createElement('select');
   options.forEach(opt => {
     const o = document.createElement('option');
@@ -783,7 +625,7 @@ function makeSelectTd(options, val, onChange, styleType) {
     if (opt === val) o.selected = true;
     sel.appendChild(o);
   });
-  sel.onchange = e => onChange(e.target.value, td);
+  sel.onchange = (e) => onChange(e.target.value, td);
   td.appendChild(sel);
   return td;
 }
@@ -819,18 +661,18 @@ async function syncToSheets() {
   const btn = document.querySelector('button.primary');
   btn.textContent = '⏳ Mengirim...'; btn.disabled = true;
   try {
-    const values = [['Tgl','No','Kode Booking','Alamat','#Produk','Produk','Nama Produk','Ukuran','Tipe Kaos Kaki','Ekspedisi','Packing','Nama','Kirim','Link','Countdown']];
+    const values = [['Tgl','No','Kode Booking','Alamat','Produk','Nama Produk','Ukuran','Tipe Kaos Kaki','Ekspedisi','Packing','Nama','Kirim','Link','Countdown']];
     orders.forEach(o => {
       o.produkList.forEach((p, pi) => {
         values.push([
           pi===0?o.tgl:'', pi===0?o.no:'', pi===0?o.kodeBooking:'', pi===0?o.alamat:'',
-          pi===0?o.produkList.length:'',
           p.produk, p.namaProduk, p.ukuran, p.tipeKaosKaki,
           pi===0?o.ekspedisi:'', pi===0?o.packing:'', pi===0?o.nama:'',
           pi===0?o.kirim:'', pi===0?o.link:'', pi===0?o.countdown:''
         ]);
       });
     });
+
     const range = `${sheetName}!A1`;
     const resp = await fetch(
       `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${encodeURIComponent(range)}?valueInputOption=RAW`,
@@ -846,12 +688,11 @@ async function syncToSheets() {
 }
 
 function showSyncFallback() {
-  const lines = [['Tgl','No','Kode Booking','Alamat','#Produk','Produk','Nama Produk','Ukuran','Tipe Kaos Kaki','Ekspedisi','Packing','Nama','Kirim','Link','Countdown'].join('\t')];
+  const lines = [['Tgl','No','Kode Booking','Alamat','Produk','Nama Produk','Ukuran','Tipe Kaos Kaki','Ekspedisi','Packing','Nama','Kirim','Link','Countdown'].join('\t')];
   orders.forEach(o => {
     o.produkList.forEach((p, pi) => {
       lines.push([
         pi===0?o.tgl:'', pi===0?o.no:'', pi===0?o.kodeBooking:'', pi===0?o.alamat:'',
-        pi===0?o.produkList.length:'',
         p.produk, p.namaProduk, p.ukuran, p.tipeKaosKaki,
         pi===0?o.ekspedisi:'', pi===0?o.packing:'', pi===0?o.nama:'',
         pi===0?o.kirim:'', pi===0?o.link:'', pi===0?o.countdown:''
@@ -883,7 +724,7 @@ function saveSheetId() {
   document.getElementById('status-bar').textContent = `✅ Sheet ID disimpan: ${sheetId.substring(0,20)}...`;
 }
 
-// ===================== SOUND TOGGLE =====================
+// ===================== SOUND =====================
 function toggleSound() {
   soundEnabled = !soundEnabled;
   document.getElementById('sound-btn').textContent = soundEnabled ? '🔊 Suara: ON' : '🔇 Suara: OFF';
@@ -891,12 +732,15 @@ function toggleSound() {
 
 // ===================== KEYBOARD SHORTCUTS =====================
 document.addEventListener('keydown', (e) => {
+  // Ctrl+Delete atau Ctrl+Backspace → hapus pesanan terpilih
   if ((e.key === 'Delete' || e.key === 'Backspace') && e.ctrlKey && selectedOrders.size > 0) {
     deleteSelected();
   }
-  const isMac = e.metaKey && e.altKey && e.shiftKey && e.key === '0';
-  const isWin = e.ctrlKey && e.altKey && e.shiftKey && e.key === '0';
-  if (isMac || isWin) {
+
+  // Cmd+Option+Shift+0 (Mac) / Ctrl+Alt+Shift+0 (Win) → tambah produk ke pesanan terpilih
+  const isMacShortcut = e.metaKey && e.altKey && e.shiftKey && e.key === '0';
+  const isWinShortcut = e.ctrlKey && e.altKey && e.shiftKey && e.key === '0';
+  if (isMacShortcut || isWinShortcut) {
     e.preventDefault();
     let targetIdx = -1;
     if (selectedOrders.size > 0) {
@@ -904,26 +748,18 @@ document.addEventListener('keydown', (e) => {
     } else if (orders.length > 0) {
       targetIdx = orders.length - 1;
     }
-    if (targetIdx >= 0) addProdukToOrder(targetIdx);
+    if (targetIdx >= 0) {
+      addProdukToOrder(targetIdx);
+      showIndicator('instant', '➕ Produk ditambahkan');
+    }
   }
 });
 
 // ===================== INIT =====================
-const restored = loadFromLocalStorage();
-if (!restored) {
-  orders.push(makeOrder(0));
-  renumberOrders();
-}
-
+orders.push(makeOrder());
+renumberOrders();
 renderAll();
-applyFilter();
 updateStatus();
-
-if (restored) {
-  setAutosaveIndicator('saved');
-  document.getElementById('status-bar').textContent =
-    `♻️ Data dipulihkan • ${orders.length} pesanan • ${orders.reduce((s,o)=>s+o.produkList.length,0)} produk`;
-}
 </script>
 </body>
 </html>
